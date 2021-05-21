@@ -28,7 +28,7 @@ function setup() {
   background(255);
   imageMode(CENTER);
 
-  socket = io.connect('https://science-gallery-wheel.netlify.app:3000');
+  socket = io.connect('https://science-gallery-wheel.netlify.app/public:3000');
   socket.on('heart', drawHeartParticle);
   socket.on('clap', drawClapParticle);
   //bgCurrentColor = color(random(255),0,0);
