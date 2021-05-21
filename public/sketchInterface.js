@@ -11,7 +11,7 @@ function preload() {
 function setup() {
   createCanvas(375, 667,P2D);
   background(255,255,255);
-  socket = io.connect('https://science-gallery-wheel.netlify.app:3000');
+  socket = io.connect('http://science-gallery-wheel.netlify.app:3000');
   imageMode(CENTER);
 }
 
