@@ -18,13 +18,13 @@ function newConnection(socket){
 
   function heartReceived(data){
   	socket.broadcast.emit('heart', data);
-  	console.log(data);
+  	// console.log(data);
   }
 
-  socket.on('clap', clapReceived);
+  socket.on('slide', sliderReceived);
 
-  function clapReceived(data){
-  	socket.broadcast.emit('clap', data);
-  	console.log(data);
+  function sliderReceived(data){
+    socket.broadcast.emit('slide', data);
+    // console.log(data);
   }
 }

@@ -1,12 +1,10 @@
 class Particle{
   constructor(x,y){
     this.pos = createVector(x,y);
-    this.vel = p5.Vector.random2D();
-    this.vel.mult(random(0.5));
-    this.acc = createVector(0,0);
-    this.r = 10;
+    this.vel = createVector(random(-1,1),random(-1,1));
+    this.acc = createVector(random(-0.5,0.5),random(-0.5,0.5));
+    this.r = 355;
     this.lifetime = 255;
-    this.imgRef = floor(random(6));
   }
 
   finished(){
@@ -20,15 +18,11 @@ class Particle{
   update(){
     this.vel.add(this.acc);
     this.pos.add(this.vel);
-    this.acc.set(0,0);
-    this.lifetime -= 2;
+    this.lifetime -= 4;
   }
 
-  show(imagesArray){
-  	// stroke(255,this.lifetime);
-  	// fill(255,this.lifetime);
+  show(){
   	tint(255, this.lifetime);
-  	// ellipse(this.pos.x, this.pos.y, this.r*2);
-  	image(imagesArray[this.imgRef],this.pos.x, this.pos.y);
+  	image(placeholderHeart,this.pos.x, this.pos.y,this.r-this.lifetime,this.r-this.lifetime);
   }
 }
