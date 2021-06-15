@@ -53,7 +53,6 @@ function setup() {
   cnv.parent('myCanvas');
   background(0);
   imageMode(CENTER);
-  textSize(100);
   textAlign(CENTER);
 
   socket = io.connect('localhost:3000');
@@ -75,13 +74,13 @@ function setup() {
 }
 
 function draw() {
-  background(220);
+  
 
   if (!livekmsData) {
      //Wait until data has loaded before drawing.
     return;
  }
- 
+ background(200);
   totalkms = select('#totalnum');
   var kmsDec = nf(sessionkms,0,2);
   totalkms.html(kmsDec);
@@ -94,8 +93,11 @@ function draw() {
 
   fill(0);
   var inMetres = floor(sessionkms*1000);
-  text(inMetres,width/2,height/2-50);
-  text("METRES",width/2,height/2+100);
+  textSize(120);
+  text(inMetres,width/2,height/2-10);
+  textSize(48);
+
+  text("METRES",width/2,height/2+80);
 
 
   for (let particle of heartParticles){
