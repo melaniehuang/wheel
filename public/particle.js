@@ -26,3 +26,24 @@ class Particle{
   	image(placeholderHeart,this.pos.x, this.pos.y,this.r-this.lifetime,this.r-this.lifetime);
   }
 }
+
+class ellipseParticle{
+  constructor(x,y,hColor){
+    this.pos = createVector(x,y);
+    this.eFill = hColor;
+    this.lifetime = 255;
+  }
+
+  finished(){
+    return (this.lifetime < 0);
+  }
+
+  update(){
+    this.lifetime -= 1;
+  }
+
+  show(){
+    fill(this.eFill);
+    ellipse(this.pos.x, this.pos.y,150,150);
+  }
+}
