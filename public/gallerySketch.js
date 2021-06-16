@@ -11,17 +11,20 @@ let totalkms;
 var prevkms = [];
 var maxRadius = 2000;
 var lineWidth = 40;
-var rainbow = ['rgb(201,44,44)',
-               'rgb(226,113,43)',
-               'rgb(254,220,24)',
-               'rgb(109,179,74)',
-               'rgb(73,172,146)',
-               'rgb(50,171,181)',
-               'rgb(49,69,129)',
-               'rgb(98,63,114)',
-               'rgb(213,134,189)'];
+var rainbow = ['rgb(235,51,0)',
+               'rgb(255,117,0)',
+               'rgb(247,234,72)',
+               'rgb(91,197,0)',
+               'rgb(72,213,151)',
+               'rgb(44,204,211)',
+               'rgb(0,80,181)',
+               'rgb(95,36,159)',
+               'rgb(242,119,198)'];
 var colorCounter = 0;
 var shapePosition = 0;
+
+//Green 91,197,0
+
 
 //Odometre Data
 //http://45.113.235.98/api/simulator
@@ -117,25 +120,23 @@ function draw() {
 function fetchNewData(){
   let url = 'http://45.113.235.98/api/simulator';
   httpGet(url, 'json', function(response) {
-    // when the HTTP request completes, populate the variable that holds the
-    // earthquake data used in the visualization.
     livekmsData = response;
 
-	if (livekmsData[0].status === 'active'){
-	  wheelOn = true;
-	  wheelkms = livekmsData[0].km;
-    } else {
-	  wheelOn = false;
-	  wheelkms = 0;
-    }
-	  
-	if (livekmsData[1].status === 'active'){
-	   armOn = true;
-	   armkms = livekmsData[1].km;
-	} else {
-	   armOn = false;
-	   armkms = 0;
-	}
+  	if (livekmsData[0].status === 'active'){
+  	  wheelOn = true;
+  	  wheelkms = livekmsData[0].km;
+      } else {
+  	  wheelOn = false;
+  	  wheelkms = 0;
+      }
+  	  
+  	if (livekmsData[1].status === 'active'){
+  	   armOn = true;
+  	   armkms = livekmsData[1].km;
+  	} else {
+  	   armOn = false;
+  	   armkms = 0;
+  	}
 	  
 	sessionkms = wheelkms + armkms ;
   });
@@ -171,7 +172,7 @@ function drawVisualisation(){
     let x = r * cos(a);
     let y = r * sin(a);
     //vertex(x,y);
-    fill(h,78,78);
+    fill(h,95,95);
     ellipse(x,y,150,150);
   }
   endShape();

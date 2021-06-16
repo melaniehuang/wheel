@@ -1,5 +1,6 @@
 var socket;
 let heart;
+var cnv;
 
 function preload() {
   heart = loadImage('data/heart.png');
@@ -7,15 +8,16 @@ function preload() {
 
 
 function setup() {
-  createCanvas(windowWidth, windowHeight,P2D);
+  cnv = createCanvas(windowWidth,windowHeight,P2D);
+  cnv.parent('userCanvas');
   background(255,255,255);
   socket = io.connect('localhost:3000');
   imageMode(CENTER);
 }
 
 function draw() {
-  background(242);
-  image(heart,width/2,height/2,125,125);
+  background('#f9f9f9');
+  image(heart,width/2,windowHeight/2-windowWidth/3+windowWidth/8,windowWidth/3,windowWidth/3);
 }
 
 function mouseReleased() {
