@@ -32,8 +32,11 @@ var kmsIncreased = false;
 
 //Odometre Data
 //http://45.113.235.98/api/simulator
-
 //http://45.113.235.98/api/history?limit=10
+
+let historicalkmsData;
+let historicalScale;
+//http://45.113.235.98/api/live
 let livekmsData;
 
 //if simultaneous - add up score together
@@ -43,9 +46,12 @@ var armkms;
 var wheelOn;
 var armOn;
 
+//Lato
+let LatoRegular;
+
 function preload() {
   placeholderHeart = loadImage('data/heart.png');
-
+  LatoRegular = loadFont('data/Lato-Regular.ttf')
 }
 
 function setup() {
@@ -54,6 +60,7 @@ function setup() {
   
   background('#f9f9f9');
   imageMode(CENTER);
+  textFont(LatoRegular);
   textAlign(CENTER);
   colorMode(HSB);
   
@@ -69,7 +76,7 @@ function setup() {
   
   //http://45.113.235.98/api/history?limit=9
   for (var i = 0; i < 9; i++){
-    prevkms.push(random(PI));
+    prevkms.push(TWO_PI);
   }
 }
 
@@ -83,10 +90,13 @@ function draw() {
   getTotalKmData(sessionkms);
   drawHistorical();
   // drawSessionVisualisation();
-  drawSessionParticles(simulatekms, ellipseParticles.length);
-  drawOdometre(floor(simulatekms*1000));
-  drawCheerHearts();
+  drawSessionParticles(simulatekms);
+
+  var formatCurrentSession = (simulatekms*1000).toFixed(2);
+  drawOdometre(formatCurrentSession);
+  
   updateSessionParticles();
+  drawCheerHearts();
 }
 
 function drawCheerHearts(){
@@ -102,27 +112,40 @@ function drawCheerHearts(){
   } 
 }
 
-function drawSessionParticles(sessionMetreData, length){
+function drawSessionParticles(sessionMetreData){
 
   if(kmsIncreased){
-    //instead of clearing and redrawing - calculate where to add.
     ellipseParticles = [];
 
-    var mappedSessionData = map(sessionMetreData, 0, 1, 0, TWO_PI);
-
     push();
-      translate(width/2,height/2);
       noStroke();
-      rotate(-HALF_PI);
-      for (let i = 0; i < mappedSessionData; i+=0.05){
-        let mappedColor = map(i, 0, TWO_PI*2, 0, 1);
-        let h = lerp(0, 360,mappedColor);
-        let colorFill = color(h,90,90);
-        let r = 470;
-        let x = r * cos(i);
-        let y = r * sin(i);
-        ellipseParticles.push(new ellipseParticle(x,y,colorFill));  
-      }  
+      var mappedSessionData = map(sessionMetreData, 0, 1, 0, TWO_PI);
+
+      var startPoint = floor(mappedSessionData/(TWO_PI*2))*TWO_PI*2;
+      var mappedFullCycle = (mappedSessionData/(TWO_PI*2))%1;
+      var remainingCycle = mappedFullCycle*(TWO_PI*2);
+
+      if (startPoint > TWO_PI) {
+        for (let i = startPoint-TWO_PI; i < startPoint+remainingCycle; i+=0.05){
+          let mappedColor = map(i, 0, TWO_PI*2, 0, 1);
+          let h = lerp(0, 360,mappedColor);
+          let colorFill = color(h%360,90,90);
+          let r = 470;
+          let x = r * cos(i);
+          let y = r * sin(i);
+          ellipseParticles.push(new ellipseParticle(x,y,colorFill));  
+        }         
+      } else {
+        for (let i = startPoint; i < startPoint+remainingCycle; i+=0.05){
+          let mappedColor = map(i, 0, TWO_PI*2, 0, 1);
+          let h = lerp(0, 360,mappedColor);
+          let colorFill = color(h%360,90,90);
+          let r = 470;
+          let x = r * cos(i);
+          let y = r * sin(i);
+          ellipseParticles.push(new ellipseParticle(x,y,colorFill));  
+        }           
+      }
     pop();   
   } 
 
@@ -131,16 +154,17 @@ function drawSessionParticles(sessionMetreData, length){
 function updateSessionParticles(){
   push();
   translate(width/2,height/2);
+  rotate(-HALF_PI);
     for (let eparticle of ellipseParticles){
       eparticle.update();
       eparticle.show();    
     }
     //and then update the lifetime properly
-    for(let i = ellipseParticles.length-1; i >= 0; i--){
-      if (ellipseParticles[i].finished()){
-        ellipseParticles.splice(i,1);
-      }
-    } 
+    // for(let i = ellipseParticles.length-1; i >= 0; i--){
+    //   if (ellipseParticles[i].finished()){
+    //     ellipseParticles.splice(i,1);
+    //   }
+    // } 
   pop();
 }
 
@@ -195,6 +219,18 @@ function fetchNewData(){
       kmsIncreased = false;
     }
   });
+
+  let urlHistory = 'http://45.113.235.98/api/history?limit=9';
+  httpGet(urlHistory, 'json', function(response) {
+    historicalkmsData = response;
+    prevkms = [];
+
+    for (var i = 0; i < 9; i++){
+      prevkms.push(historicalkmsData[i].kmh);
+    }
+
+    historicalScale = Math.max.apply(null,prevkms);
+  });
   //[{"deviceId":"ratwheel","sessionId":"P1337","rotations":175,"tsStart":1623736759553,"tsEnd":1623737179553,"avgRpm":14.14,"totalMinutes":7,"km":1.92,"avgKmh":16.49,"topSpeed":15.17,"status":"active"},{"deviceId":"armwheel","sessionId":"P8932","rotations":455,"tsStart":1623736759553,"tsEnd":1623737179553,"avgRpm":40.43,"totalMinutes":7,"km":1.43,"avgKmh":12.25,"topSpeed":10.37,"status":"active"}]
 }
 
@@ -202,37 +238,38 @@ function drawHistorical(){
   for (var i = 0; i < 9; i++){
     noFill();
     stroke(rainbow[i]);
-    arc(width/2, height/2, maxRadius-(lineWidth*2)-(i*(lineWidth*2)), maxRadius-(lineWidth*2)-(i*(lineWidth*2)), -HALF_PI, HALF_PI+prevkms[i],OPEN);
+    var historicalCurrentMapped = map(prevkms[i], 0,historicalScale,0, TWO_PI);
+    arc(width/2, height/2, maxRadius-(lineWidth*2)-(i*(lineWidth*2)), maxRadius-(lineWidth*2)-(i*(lineWidth*2)), -HALF_PI, historicalCurrentMapped,OPEN);
   }
 }
 
-function drawSessionVisualisation(){
-  push();
-    translate(width/2,height/2);
-    noStroke();
-    rotate(-HALF_PI);
+// function drawSessionVisualisation(){
+//   push();
+//     translate(width/2,height/2);
+//     noStroke();
+//     rotate(-HALF_PI);
 
-    var shapekms = map(sessionkms, 0, 1,0,TWO_PI);
-    
-    beginShape();
-      for (let a = 0; a < shapekms; a+=0.01){
-        let mappedColor = map(a, 0, TWO_PI*2, 0, 1);
-        let h = lerp(0, 360,mappedColor);
-        let r = 470;
-        let x = r * cos(a);
-        let y = r * sin(a);
-        fill(h,95,95);
-        ellipse(x,y,150,150);
-      }
-    endShape();
-  pop();
+//     var shapekms = map(sessionkms, 0, 1,0,TWO_PI);
 
-  shapePosition+=0.01;
+//     beginShape();
+//       for (let a = 0; a < shapekms; a+=0.01){
+//         let mappedColor = map(a, 0, TWO_PI*2, 0, 1);
+//         let h = lerp(0, 360,mappedColor);
+//         let r = 470;
+//         let x = r * cos(a);
+//         let y = r * sin(a);
+//         fill(h,95,95);
+//         ellipse(x,y,150,150);
+//       }
+//     endShape();
+//   pop();
 
-  if(shapePosition > (TWO_PI*2)){
-  	shapePosition = 0;
-  }
-}
+//   shapePosition+=0.01;
+
+//   if(shapePosition > (TWO_PI*2)){
+//   	shapePosition = 0;
+//   }
+// }
 
 
 
@@ -242,8 +279,8 @@ function drawHeartParticle(data){
   }
 }
 
-function drawNumbers(data){
-}
+// function drawNumbers(data){
+// }
 
-function windowResized() {
-}
+// function windowResized() {
+// }

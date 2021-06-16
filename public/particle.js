@@ -1,8 +1,8 @@
 class Particle{
   constructor(x,y){
     this.pos = createVector(x,y);
-    this.vel = createVector(random(-1,1),random(-1,1));
-    this.acc = createVector(random(-0.5,0.5),random(-0.5,0.5));
+    this.vel = createVector(random(-0.5,0.5),random(-0.5,0.5));
+    this.acc = createVector(random(-0.2,0.2),random(-0.2,0.2));
     this.r = 355;
     this.lifetime = 255;
   }
@@ -18,7 +18,7 @@ class Particle{
   update(){
     this.vel.add(this.acc);
     this.pos.add(this.vel);
-    this.lifetime -= 4;
+    this.lifetime -= 2;
   }
 
   show(){
@@ -44,6 +44,6 @@ class ellipseParticle{
 
   show(){
     fill(this.eFill);
-    ellipse(this.pos.x, this.pos.y,150,150);
+    ellipse(this.pos.x, this.pos.y,180,180);
   }
 }
