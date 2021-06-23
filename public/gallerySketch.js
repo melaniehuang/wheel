@@ -37,21 +37,22 @@ var kmsIncreased = false;
 let historicalkmsData;
 let historicalScale;
 //http://45.113.235.98/api/live
-let livekmsData;
 
 //if simultaneous - add up score together
 var sessionkms=0;
-var wheelkms;
-var armkms;
+var wheelkms = 0;
+var armkms = 0;
 var wheelOn;
 var armOn;
 
 //Lato
 let LatoRegular;
+var startGetData;
 
 function preload() {
   placeholderHeart = loadImage('data/heart.png');
   LatoRegular = loadFont('data/Lato-Regular.ttf')
+  fetchHistorical();
 }
 
 function setup() {
@@ -63,12 +64,28 @@ function setup() {
   textFont(LatoRegular);
   textAlign(CENTER);
   colorMode(HSB);
-  
-  setInterval(fetchNewData, 2000);
 
-  socket = io.connect('localhost:3000');
-  socket.on('heart', drawHeartParticle);
-  
+  socket = io.connect('45.113.235.98');
+  //startInterval();
+  //socket.on('heart', drawHeartParticle);
+  socket.on('update', function(data) {
+  	console.log('update received:');
+  	console.log(data);
+  	updateData(data);
+  });
+
+  socket.on('ping', function(data) {
+	console.log('ping received:');
+	console.log(data);
+	fetchHistorical(data);
+  });
+
+  socket.on('like', function(data) {
+	console.log('like received:');
+	console.log(data);
+	drawHeartParticle();
+  });
+
   strokeWeight(lineWidth);
   strokeCap(SQUARE);
   noFill();  
@@ -80,19 +97,29 @@ function setup() {
   }
 }
 
+// function startInterval(data){ 
+//   startGetData = setInterval(fetchNewData(data), 1000);
+//   console.log("Fetching data...");
+// }
+
+// function stopInterval(){ 
+//   clearInterval(startGetData);
+//   console.log("Waiting for new data...");
+// }
+
 function draw() {
-  if (!livekmsData) {
-    sessionkms = 0;
-  }
+  // if (!livekmsData) {
+  //   sessionkms = 0;
+  // }
 
   background('#f9f9f9');
 
   getTotalKmData(sessionkms);
   drawHistorical();
   // drawSessionVisualisation();
-  drawSessionParticles(simulatekms);
+  drawSessionParticles(sessionkms);
 
-  var formatCurrentSession = (simulatekms*1000).toFixed(2);
+  var formatCurrentSession = (sessionkms*1000).toFixed(2);
   drawOdometre(formatCurrentSession);
   
   updateSessionParticles();
@@ -114,7 +141,7 @@ function drawCheerHearts(){
 
 function drawSessionParticles(sessionMetreData){
 
-  if(kmsIncreased){
+  //if(kmsIncreased){
     ellipseParticles = [];
 
     push();
@@ -147,7 +174,7 @@ function drawSessionParticles(sessionMetreData){
         }           
       }
     pop();   
-  } 
+  //} 
 
 }
 
@@ -187,39 +214,27 @@ function drawOdometre(sessionMetreData){
   text("METRES",width/2,height/2+80); 
 }
 
-function fetchNewData(){
-  let url = 'http://45.113.235.98/api/simulator';
-  httpGet(url, 'json', function(response) {
-    livekmsData = response;
+function updateData(updatedData){
+  if(updatedData.deviceId === 'ratwheel'){
+  	wheelkms = updatedData.km;
+  } else {
+  	armkms = updatedData.km;
+  }
+  sessionkms = wheelkms + armkms;
+}
+    
+//prevSimulateKms = sessionkms;
+// simulatekms += 0.1;
 
-  	if (livekmsData[0].status === 'active'){
-  	  wheelOn = true;
-  	  wheelkms = livekmsData[0].km;
-      } else {
-  	  wheelOn = false;
-  	  wheelkms = 0;
-      }
-  	  
-  	if (livekmsData[1].status === 'active'){
-  	   armOn = true;
-  	   armkms = livekmsData[1].km;
-  	} else {
-  	   armOn = false;
-  	   armkms = 0;
-  	}
-	  
-  	sessionkms = wheelkms + armkms ;
+// if(prevSimulateKms<simulatekms){
+//   kmsIncreased = true;
+// } else {
+//   kmsIncreased = false;
+// }
 
-    prevSimulateKms = simulatekms;
-    simulatekms += 0.1;
 
-    if(prevSimulateKms<simulatekms){
-      kmsIncreased = true;
-    } else {
-      kmsIncreased = false;
-    }
-  });
-
+function fetchHistorical(){
+  console.log("fetching historical...");	
   let urlHistory = 'http://45.113.235.98/api/history?limit=9';
   httpGet(urlHistory, 'json', function(response) {
     historicalkmsData = response;
@@ -227,11 +242,10 @@ function fetchNewData(){
 
     for (var i = 0; i < 9; i++){
       prevkms.push(historicalkmsData[i].kmh);
-    }
 
+    }
     historicalScale = Math.max.apply(null,prevkms);
   });
-  //[{"deviceId":"ratwheel","sessionId":"P1337","rotations":175,"tsStart":1623736759553,"tsEnd":1623737179553,"avgRpm":14.14,"totalMinutes":7,"km":1.92,"avgKmh":16.49,"topSpeed":15.17,"status":"active"},{"deviceId":"armwheel","sessionId":"P8932","rotations":455,"tsStart":1623736759553,"tsEnd":1623737179553,"avgRpm":40.43,"totalMinutes":7,"km":1.43,"avgKmh":12.25,"topSpeed":10.37,"status":"active"}]
 }
 
 function drawHistorical(){
@@ -243,44 +257,8 @@ function drawHistorical(){
   }
 }
 
-// function drawSessionVisualisation(){
-//   push();
-//     translate(width/2,height/2);
-//     noStroke();
-//     rotate(-HALF_PI);
-
-//     var shapekms = map(sessionkms, 0, 1,0,TWO_PI);
-
-//     beginShape();
-//       for (let a = 0; a < shapekms; a+=0.01){
-//         let mappedColor = map(a, 0, TWO_PI*2, 0, 1);
-//         let h = lerp(0, 360,mappedColor);
-//         let r = 470;
-//         let x = r * cos(a);
-//         let y = r * sin(a);
-//         fill(h,95,95);
-//         ellipse(x,y,150,150);
-//       }
-//     endShape();
-//   pop();
-
-//   shapePosition+=0.01;
-
-//   if(shapePosition > (TWO_PI*2)){
-//   	shapePosition = 0;
-//   }
-// }
-
-
-
 function drawHeartParticle(data){
   for(let i = 0; i < 1; i++){
   	heartParticles.push(new Particle(width/2,height/2));
   }
 }
-
-// function drawNumbers(data){
-// }
-
-// function windowResized() {
-// }

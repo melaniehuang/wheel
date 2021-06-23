@@ -21,10 +21,10 @@ function newConnection(socket){
   	// console.log(data);
   }
 
-  socket.on('slide', sliderReceived);
+  // socket.on('slide', sliderReceived);
 
-  function sliderReceived(data){
-    socket.broadcast.emit('slide', data);
-    // console.log(data);
-  }
+  // function sliderReceived(data){
+  //   socket.broadcast.emit('slide', data);
+  //   // console.log(data);
+  // }
 }
