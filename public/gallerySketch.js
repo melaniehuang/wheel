@@ -52,7 +52,6 @@ var startGetData;
 function preload() {
   placeholderHeart = loadImage('data/heart.png');
   LatoRegular = loadFont('data/Lato-Regular.ttf')
-  fetchHistorical();
 }
 
 function setup() {
@@ -64,26 +63,34 @@ function setup() {
   textFont(LatoRegular);
   textAlign(CENTER);
   colorMode(HSB);
+  
 
   socket = io.connect('45.113.235.98');
-  //startInterval();
-  //socket.on('heart', drawHeartParticle);
+
+  // socket.on("connect", () => {
+  //   console.log(socket.connected);
+  //   updateData(data);    
+  // });
+
+
   socket.on('update', function(data) {
   	console.log('update received:');
-  	console.log(data);
+  	console.log(data);    
   	updateData(data);
+    fetchHistorical(data);
+    // if(data.rpm === "0"){
+    //   console.log(data.rpm);
+    //   fetchHistorical(data);
+    // }
   });
 
-  socket.on('ping', function(data) {
-	console.log('ping received:');
-	console.log(data);
-	fetchHistorical(data);
-  });
+  // socket.on('ping', function(data) {
+  // });
 
   socket.on('like', function(data) {
-	console.log('like received:');
-	console.log(data);
-	drawHeartParticle();
+	  console.log('like received:');
+	  console.log(data);
+	  drawHeartParticle();
   });
 
   strokeWeight(lineWidth);
@@ -96,16 +103,6 @@ function setup() {
     prevkms.push(TWO_PI);
   }
 }
-
-// function startInterval(data){ 
-//   startGetData = setInterval(fetchNewData(data), 1000);
-//   console.log("Fetching data...");
-// }
-
-// function stopInterval(){ 
-//   clearInterval(startGetData);
-//   console.log("Waiting for new data...");
-// }
 
 function draw() {
   // if (!livekmsData) {
@@ -216,9 +213,9 @@ function drawOdometre(sessionMetreData){
 
 function updateData(updatedData){
   if(updatedData.deviceId === 'ratwheel'){
-  	wheelkms = updatedData.km;
+  	wheelkms = updatedData.kmh;
   } else {
-  	armkms = updatedData.km;
+  	armkms = updatedData.kmh;
   }
   sessionkms = wheelkms + armkms;
 }
