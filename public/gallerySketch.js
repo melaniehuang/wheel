@@ -2,7 +2,9 @@ var socket;
 let cnv;
 let placeholderHeart;
 let heartParticles = [];
-let ellipseParticles = [];
+let armParticles = [];
+let wheelParticles = [];
+
 let bgCurrentColor;
 
 let kilometres = 0;
@@ -114,11 +116,13 @@ function draw() {
   getTotalKmData(sessionkms);
   drawHistorical();
   // drawSessionVisualisation();
-  drawSessionParticles(sessionkms);
+  drawSessionParticles(wheelkms,470);
 
-  var formatCurrentSession = (sessionkms*1000).toFixed(2);
-  drawOdometre(formatCurrentSession);
+  var formatArmKms = (armkms*1000).toFixed(2);
+  var formatWheelKms = (wheelkms*1000).toFixed(2);
+  drawOdometre(formatArmKms, formatWheelKms);
   
+  // updateSessionParticles(armParticles);
   updateSessionParticles();
   drawCheerHearts();
 }
@@ -136,14 +140,14 @@ function drawCheerHearts(){
   } 
 }
 
-function drawSessionParticles(sessionMetreData){
+function drawSessionParticles(latestData, radius){
 
   //if(kmsIncreased){
     ellipseParticles = [];
 
     push();
       noStroke();
-      var mappedSessionData = map(sessionMetreData, 0, 1, 0, TWO_PI);
+      var mappedSessionData = map(latestData, 0, 1, 0, TWO_PI);
 
       var startPoint = floor(mappedSessionData/(TWO_PI*2))*TWO_PI*2;
       var mappedFullCycle = (mappedSessionData/(TWO_PI*2))%1;
@@ -154,7 +158,7 @@ function drawSessionParticles(sessionMetreData){
           let mappedColor = map(i, 0, TWO_PI*2, 0, 1);
           let h = lerp(0, 360,mappedColor);
           let colorFill = color(h%360,90,90);
-          let r = 470;
+          let r = radius;
           let x = r * cos(i);
           let y = r * sin(i);
           ellipseParticles.push(new ellipseParticle(x,y,colorFill));  
@@ -164,7 +168,7 @@ function drawSessionParticles(sessionMetreData){
           let mappedColor = map(i, 0, TWO_PI*2, 0, 1);
           let h = lerp(0, 360,mappedColor);
           let colorFill = color(h%360,90,90);
-          let r = 470;
+          let r = radius;
           let x = r * cos(i);
           let y = r * sin(i);
           ellipseParticles.push(new ellipseParticle(x,y,colorFill));  
@@ -198,26 +202,36 @@ function getTotalKmData(totalKmData){
   totalkms.html(kmsDec);
 }
 
-function drawOdometre(sessionMetreData){
+function drawOdometre(armMetreData, wheelMetreData){
   fill(255);
   noStroke();
   ellipse(width/2,height/2,750,750);
 
   fill(0);
-  textSize(120);
-  text(sessionMetreData,width/2,height/2-10);
+  textSize(100);
+  text(wheelMetreData,width/2,height/2-70);
 
   textSize(48);
-  text("METRES",width/2,height/2+80); 
+  text("METRES",width/2,height/2+24); 
+
+  fill(0);
+  textSize(100);
+  text(armMetreData,width/2,height/2+160);
 }
 
 function updateData(updatedData){
   if(updatedData.deviceId === 'ratwheel'){
-  	wheelkms = updatedData.kmh;
+    wheelkms = updatedData.kmh;
   } else {
-  	armkms = updatedData.kmh;
+    armkms = updatedData.kmh;
   }
-  sessionkms = wheelkms + armkms;
+  // if(updatedData.deviceId === 'ratwheel'){
+  // 	wheelkms = updatedData.kmh;
+  // } else {
+  // 	armkms = updatedData.kmh;
+  // }
+
+  // sessionkms = wheelkms + armkms;
 }
     
 //prevSimulateKms = sessionkms;

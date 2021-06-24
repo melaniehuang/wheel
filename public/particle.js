@@ -43,6 +43,6 @@ class ellipseParticle{
 
   show(){
     fill(this.eFill);
-    ellipse(this.pos.x, this.pos.y,180,180);
+    ellipse(this.pos.x, this.pos.y,90,90);
   }
 }
