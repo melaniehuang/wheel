@@ -26,7 +26,29 @@ class Particle{
   }
 }
 
-class ellipseParticle{
+class armParticle{
+  constructor(x,y,hColor){
+    this.pos = createVector(x,y);
+    this.eFill = hColor;
+    this.lifetime = 255;
+  }
+
+  finished(){
+    return (this.lifetime < 0);
+  }
+
+  update(){
+    this.lifetime -= 1;
+  }
+
+  show(){
+    fill(this.eFill);
+    ellipse(this.pos.x, this.pos.y,90,90);
+  }
+}
+
+
+class wheelParticle{
   constructor(x,y,hColor){
     this.pos = createVector(x,y);
     this.eFill = hColor;

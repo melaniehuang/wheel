@@ -69,21 +69,18 @@ function setup() {
 
   socket = io.connect('45.113.235.98');
 
-  // socket.on("connect", () => {
-  //   console.log(socket.connected);
-  //   updateData(data);    
-  // });
-
+  //fetch current data
+  fetchHistorical();
 
   socket.on('update', function(data) {
   	console.log('update received:');
   	console.log(data);    
   	updateData(data);
-    fetchHistorical(data);
-    // if(data.rpm === "0"){
-    //   console.log(data.rpm);
-    //   fetchHistorical(data);
-    // }
+
+    if(data.rpm === "0"){
+      console.log("Session has ended.");
+      fetchHistorical(data);
+    }
   });
 
   // socket.on('ping', function(data) {
@@ -107,22 +104,17 @@ function setup() {
 }
 
 function draw() {
-  // if (!livekmsData) {
-  //   sessionkms = 0;
-  // }
-
   background('#f9f9f9');
 
-  getTotalKmData(sessionkms);
+  getTotalKmData(wheelkms+armkms);
   drawHistorical();
-  // drawSessionVisualisation();
-  drawSessionParticles(wheelkms,470);
+  drawWheelParticles(wheelkms, 480);
+  drawArmParticles(armkms, 390);
 
   var formatArmKms = (armkms*1000).toFixed(2);
   var formatWheelKms = (wheelkms*1000).toFixed(2);
-  drawOdometre(formatArmKms, formatWheelKms);
-  
-  // updateSessionParticles(armParticles);
+  drawOdometre(formatArmKms, formatWheelKms); 
+
   updateSessionParticles();
   drawCheerHearts();
 }
@@ -140,10 +132,8 @@ function drawCheerHearts(){
   } 
 }
 
-function drawSessionParticles(latestData, radius){
-
-  //if(kmsIncreased){
-    ellipseParticles = [];
+function drawWheelParticles(latestData, radius){
+    wheelParticles = [];
 
     push();
       noStroke();
@@ -161,7 +151,7 @@ function drawSessionParticles(latestData, radius){
           let r = radius;
           let x = r * cos(i);
           let y = r * sin(i);
-          ellipseParticles.push(new ellipseParticle(x,y,colorFill));  
+          wheelParticles.push(new wheelParticle(x,y,colorFill));  
         }         
       } else {
         for (let i = startPoint; i < startPoint+remainingCycle; i+=0.05){
@@ -171,28 +161,64 @@ function drawSessionParticles(latestData, radius){
           let r = radius;
           let x = r * cos(i);
           let y = r * sin(i);
-          ellipseParticles.push(new ellipseParticle(x,y,colorFill));  
+          wheelParticles.push(new wheelParticle(x,y,colorFill));  
         }           
       }
     pop();   
-  //} 
+}
 
+function drawArmParticles(latestData, radius){
+    armParticles = [];
+
+    push();
+      noStroke();
+      var mappedSessionData = map(latestData, 0, 1, 0, TWO_PI);
+
+      var startPoint = floor(mappedSessionData/(TWO_PI*2))*TWO_PI*2;
+      var mappedFullCycle = (mappedSessionData/(TWO_PI*2))%1;
+      var remainingCycle = mappedFullCycle*(TWO_PI*2);
+
+      if (startPoint > TWO_PI) {
+        for (let i = startPoint-TWO_PI; i < startPoint+remainingCycle; i+=0.05){
+          let mappedColor = map(i, 0, TWO_PI*2, 0, 1);
+          let h = lerp(0, 360,mappedColor);
+          let colorFill = color(h%360,90,90);
+          let r = radius;
+          let x = r * cos(i);
+          let y = r * sin(i);
+          armParticles.push(new armParticle(x,y,colorFill));  
+        }         
+      } else {
+        for (let i = startPoint; i < startPoint+remainingCycle; i+=0.05){
+          let mappedColor = map(i, 0, TWO_PI*2, 0, 1);
+          let h = lerp(0, 360,mappedColor);
+          let colorFill = color(h%360,90,90);
+          let r = radius;
+          let x = r * cos(i);
+          let y = r * sin(i);
+          armParticles.push(new armParticle(x,y,colorFill));  
+        }           
+      }
+    pop();   
 }
 
 function updateSessionParticles(){
   push();
   translate(width/2,height/2);
   rotate(-HALF_PI);
-    for (let eparticle of ellipseParticles){
-      eparticle.update();
-      eparticle.show();    
+    for (let particle of wheelParticles){
+      particle.update();
+      particle.show();    
     }
-    //and then update the lifetime properly
-    // for(let i = ellipseParticles.length-1; i >= 0; i--){
-    //   if (ellipseParticles[i].finished()){
-    //     ellipseParticles.splice(i,1);
-    //   }
-    // } 
+  pop();
+
+  push();
+  translate(width/2,height/2);
+  rotate(-HALF_PI);
+    for (let particle of armParticles){
+      particle.update();
+      particle.show();    
+    }
   pop();
 }
 
@@ -224,25 +250,8 @@ function updateData(updatedData){
     wheelkms = updatedData.kmh;
   } else {
     armkms = updatedData.kmh;
-  }
-  // if(updatedData.deviceId === 'ratwheel'){
-  // 	wheelkms = updatedData.kmh;
-  // } else {
-  // 	armkms = updatedData.kmh;
-  // }
-
-  // sessionkms = wheelkms + armkms;
+  }     
 }
-    
-//prevSimulateKms = sessionkms;
-// simulatekms += 0.1;
-
-// if(prevSimulateKms<simulatekms){
-//   kmsIncreased = true;
-// } else {
-//   kmsIncreased = false;
-// }
-
 
 function fetchHistorical(){
   console.log("fetching historical...");	
