@@ -137,7 +137,7 @@ function drawWheelParticles(latestData, radius){
 
     push();
       noStroke();
-      var mappedSessionData = map(latestData, 0, 1, 0, TWO_PI);
+      var mappedSessionData = map(latestData, 0, 0.1, 0, TWO_PI);
 
       var startPoint = floor(mappedSessionData/(TWO_PI*2))*TWO_PI*2;
       var mappedFullCycle = (mappedSessionData/(TWO_PI*2))%1;
@@ -172,7 +172,7 @@ function drawArmParticles(latestData, radius){
 
     push();
       noStroke();
-      var mappedSessionData = map(latestData, 0, 1, 0, TWO_PI);
+      var mappedSessionData = map(latestData, 0, 0.1, 0, TWO_PI);
 
       var startPoint = floor(mappedSessionData/(TWO_PI*2))*TWO_PI*2;
       var mappedFullCycle = (mappedSessionData/(TWO_PI*2))%1;
@@ -247,9 +247,9 @@ function drawOdometre(armMetreData, wheelMetreData){
 
 function updateData(updatedData){
   if(updatedData.deviceId === 'ratwheel'){
-    wheelkms = updatedData.kmh;
+    wheelkms = updatedData.km;
   } else {
-    armkms = updatedData.kmh;
+    armkms = updatedData.km;
   }     
 }
 
