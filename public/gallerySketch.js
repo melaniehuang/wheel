@@ -172,14 +172,14 @@ function drawArmParticles(latestData, radius){
 
     push();
       noStroke();
-      var mappedSessionData = map(latestData, 0, 0.1, 0, TWO_PI);
+      var mappedSessionData = map(0.01, 0, 0.1, 0, TWO_PI);
 
       var startPoint = floor(mappedSessionData/(TWO_PI*2))*TWO_PI*2;
       var mappedFullCycle = (mappedSessionData/(TWO_PI*2))%1;
       var remainingCycle = mappedFullCycle*(TWO_PI*2);
 
       if (startPoint > TWO_PI) {
-        for (let i = startPoint-TWO_PI; i < startPoint+remainingCycle; i+=0.05){
+        for (let i = startPoint-TWO_PI; i < startPoint+remainingCycle; i+=0.03){
           let mappedColor = map(i, 0, TWO_PI*2, 0, 1);
           let h = lerp(0, 360,mappedColor);
           let colorFill = color(h%360,90,90);
@@ -189,7 +189,7 @@ function drawArmParticles(latestData, radius){
           armParticles.push(new armParticle(x,y,colorFill));  
         }         
       } else {
-        for (let i = startPoint; i < startPoint+remainingCycle; i+=0.05){
+        for (let i = startPoint; i < startPoint+remainingCycle; i+=0.03){
           let mappedColor = map(i, 0, TWO_PI*2, 0, 1);
           let h = lerp(0, 360,mappedColor);
           let colorFill = color(h%360,90,90);

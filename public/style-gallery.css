@@ -39,6 +39,7 @@ body {
   border-radius: 375px;
   overflow: hidden;
   -webkit-mask-image: -webkit-radial-gradient(circle, white 100%, black 100%);  
+  mask-position: right;
 }
 
 .vidColumn{
@@ -52,6 +53,16 @@ body {
   font-size: 36px;
 }
 
+#armWheelFeed{
+  position:absolute;
+  left:-50px;
+}
+
+#wheelFeed{
+  position:absolute;
+  left:-50px;
+}
+
 #scan{
   position:absolute;
   bottom:32px;
@@ -62,7 +73,7 @@ body {
 .label{
   background-color: #000;
   color:#fff;
-  padding:14px 8px 16px 8px;
+  padding:14px 16px 16px 16px;
   text-align: center;
-  font-size: 38px;
+  font-size: 32px;
 }
