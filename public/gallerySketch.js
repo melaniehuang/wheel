@@ -31,7 +31,7 @@ var ellipseCurrentLength = 0;
 var prevSimulateKms = 0;
 var simulatekms = 0;
 var kmsIncreased = false;
-
+var totalKms = 0;
 //Odometre Data
 //http://45.113.235.98/api/simulator
 //http://45.113.235.98/api/history?limit=10
@@ -43,7 +43,8 @@ let historicalScale;
 //if simultaneous - add up score together
 var sessionkms=0;
 var wheelkms = 0;
-var armkms = 0;
+//armkms trigger from here
+var armkms = 200;
 var wheelOn;
 var armOn;
 
@@ -106,10 +107,8 @@ function setup() {
 function draw() {
   background('#f9f9f9');
 
-  getTotalKmData(wheelkms+armkms);
+  getTotalKmData(totalKms+wheelkms+armkms);
   drawHistorical();
-  drawWheelParticles(wheelkms, 480);
-  drawArmParticles(armkms, 390);
 
   var formatArmKms = (armkms*1000).toFixed(2);
   var formatWheelKms = (wheelkms*1000).toFixed(2);
@@ -232,9 +231,10 @@ function drawOdometre(armMetreData, wheelMetreData){
   fill(255);
   noStroke();
   ellipse(width/2,height/2,750,750);
-
+  
   fill(0);
   textSize(100);
+  drawWheelParticles(wheelkms, 480);
   text(wheelMetreData,width/2,height/2-70);
 
   textSize(48);
@@ -242,6 +242,7 @@ function drawOdometre(armMetreData, wheelMetreData){
 
   fill(0);
   textSize(100);
+  drawArmParticles(armkms, 390);
   text(armMetreData,width/2,height/2+160);
 }
 
@@ -253,15 +254,20 @@ function updateData(updatedData){
   }     
 }
 
+
 function fetchHistorical(){
   console.log("fetching historical...");	
   let urlHistory = 'http://45.113.235.98/api/history?limit=9';
   httpGet(urlHistory, 'json', function(response) {
-    historicalkmsData = response;
+
+    totalKms = response.totalKm;
+    getTotalKmData(totalKms);
+
+    historicalkmsData = response.sessions;
     prevkms = [];
 
     for (var i = 0; i < 9; i++){
-      prevkms.push(historicalkmsData[i].kmh);
+      prevkms.push(historicalkmsData[i].km);
 
     }
     historicalScale = Math.max.apply(null,prevkms);
