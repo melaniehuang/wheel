@@ -7,8 +7,7 @@ let wheelParticles = [];
 
 let bgCurrentColor;
 
-let kilometres = 0;
-let totalkms;
+let totalHistoricalData;
 
 //rainbow visualisation
 var prevkms = [];
@@ -32,6 +31,7 @@ var prevSimulateKms = 0;
 var simulatekms = 0;
 var kmsIncreased = false;
 var totalKms = 0;
+
 //Odometre Data
 //http://45.113.235.98/api/simulator
 //http://45.113.235.98/api/history?limit=10
@@ -40,11 +40,14 @@ let historicalkmsData;
 let historicalScale;
 //http://45.113.235.98/api/live
 
-//if simultaneous - add up score together
-var sessionkms=0;
+let wheelImage;
 var wheelkms = 0;
+var currentWheelSpeed;
 //armkms trigger from here
-var armkms = 200;
+let armImage;
+var armkms = 0.5;
+var currentArmSpeed;
+
 var wheelOn;
 var armOn;
 
@@ -55,6 +58,8 @@ var startGetData;
 function preload() {
   placeholderHeart = loadImage('data/heart.png');
   LatoRegular = loadFont('data/Lato-Regular.ttf')
+  wheelImage = loadImage('data/wheel.png');
+  armImage = loadImage('data/arm.png');
 }
 
 function setup() {
@@ -93,7 +98,7 @@ function setup() {
 	  drawHeartParticle();
   });
 
-  strokeWeight(lineWidth);
+  
   strokeCap(SQUARE);
   noFill();  
   smooth();
@@ -110,9 +115,7 @@ function draw() {
   getTotalKmData(totalKms+wheelkms+armkms);
   drawHistorical();
 
-  var formatArmKms = (armkms*1000).toFixed(2);
-  var formatWheelKms = (wheelkms*1000).toFixed(2);
-  drawOdometre(formatArmKms, formatWheelKms); 
+  drawOdometre(armkms, wheelkms); 
 
   updateSessionParticles();
   drawCheerHearts();
@@ -222,35 +225,53 @@ function updateSessionParticles(){
 }
 
 function getTotalKmData(totalKmData){
-  totalkms = select('#totalnum');
+  totalHistoricalData = select('#totalnum');
   var kmsDec = nf(totalKmData,0,2);
-  totalkms.html(kmsDec);
+  totalHistoricalData.html(kmsDec);
 }
 
 function drawOdometre(armMetreData, wheelMetreData){
-  fill(255);
+  var formatArmKms = (armMetreData*1000).toFixed(0);
+  var formatWheelKms = (wheelMetreData*1000).toFixed(0);
+
+  noFill();
+  stroke(0);
+  strokeWeight(1);
+  ellipse(width/2,height/2,810+360,810+360);
+  ellipse(width/2,height/2,810+180,810+180);
+  ellipse(width/2,height/2,810,810);
+  line(width/2-(570/2),height/2, width/2+(570/2),height/2);
+
+  fill(0);
   noStroke();
-  ellipse(width/2,height/2,750,750);
-  
+  textAlign(CENTER);
+  textSize(100);
+  drawWheelParticles(wheelMetreData, 540);
+  image(wheelImage,width/2-160,height/2-140);
+  text(formatWheelKms,width/2+(282/2),height/2-160);
+
+  textSize(20);
+  text("METRES TRAVELLED",width/2+(282/2),height/2-120); 
+  fill('#e2e2e2');
+  rect(width/2,height/2-90,282,45);
+
   fill(0);
   textSize(100);
-  drawWheelParticles(wheelkms, 480);
-  text(wheelMetreData,width/2,height/2-70);
-
-  textSize(48);
-  text("METRES",width/2,height/2+24); 
-
-  fill(0);
-  textSize(100);
-  drawArmParticles(armkms, 390);
-  text(armMetreData,width/2,height/2+160);
+  drawArmParticles(armMetreData, 450);
+  text(formatArmKms,width/2,height/2+160);
 }
 
 function updateData(updatedData){
   if(updatedData.deviceId === 'ratwheel'){
-    wheelkms = updatedData.km;
-  } else {
-    armkms = updatedData.km;
+    //console.log(updatedData.deviceId);
+    wheelkms = updatedData.kmh;
+    currentWheelSpeed = updatedData.avgRpm;
+  }
+
+  if (updatedData.deviceId === 'armwheel'){
+    //console.log(updatedData.deviceId); 
+    armkms = updatedData.kmh;
+    currentArmSpeed = updatedData.avgRpm;
   }     
 }
 
@@ -277,6 +298,7 @@ function fetchHistorical(){
 function drawHistorical(){
   for (var i = 0; i < 9; i++){
     noFill();
+    strokeWeight(lineWidth);
     stroke(rainbow[i]);
     var historicalCurrentMapped = map(prevkms[i], 0,historicalScale,0, TWO_PI);
     arc(width/2, height/2, maxRadius-(lineWidth*2)-(i*(lineWidth*2)), maxRadius-(lineWidth*2)-(i*(lineWidth*2)), -HALF_PI, historicalCurrentMapped,OPEN);

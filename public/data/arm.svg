@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="140px" height="120px" viewBox="0 0 140 120" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Artboard Copy 2</title>
+    <g id="Artboard-Copy-2" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Group-2" transform="translate(12.000000, 2.000000)" stroke="#000000" stroke-width="2">
+            <g id="Group">
+                <circle id="Oval" fill="#FFFFFF" cx="77" cy="39" r="38"></circle>
+                <circle id="Oval-Copy" fill="#FFFFFF" cx="23" cy="38" r="12"></circle>
+                <line x1="23" y1="26" x2="41" y2="26" id="Line" stroke-linecap="square"></line>
+                <line x1="23" y1="50" x2="40.009303" y2="50" id="Line-Copy" stroke-linecap="square"></line>
+                <path d="M95,32 C96.6194659,32 98.0890957,32.6415824 99.1685125,33.6844952 C100.247949,34.7274265 100.937424,36.1716114 100.995942,37.7769044 L100.995942,37.7769044 L100.999948,115 L56,115 L56,44 L25,44 C23.3431458,44 21.8431458,43.3284271 20.7573593,42.2426407 C19.6715729,41.1568542 19,39.6568542 19,38 C19,36.3431458 19.6715729,34.8431458 20.7573593,33.7573593 C21.8431458,32.6715729 23.3431458,32 25,32 L25,32 L95,32 Z" id="Combined-Shape" fill="#FFFFFF"></path>
+                <rect id="Rectangle" fill="#FFFFFF" x="1" y="36" width="25" height="4" rx="2"></rect>
+                <circle id="Oval" fill="#FFFFFF" cx="3" cy="38" r="2"></circle>
+                <circle id="Oval-Copy-2" fill="#FFFFFF" cx="24" cy="38" r="2"></circle>
+                <circle id="Oval-Copy-3" fill="#FFFFFF" cx="77" cy="38" r="2"></circle>
+                <rect id="Rectangle" fill="#FFFFFF" x="56" y="102" width="45" height="13"></rect>
+            </g>
+        </g>
+    </g>
+</svg>
