@@ -6,7 +6,6 @@ let armParticles = [];
 let wheelParticles = [];
 
 let bgCurrentColor;
-
 let totalHistoricalData;
 
 //rainbow visualisation
@@ -41,15 +40,17 @@ let historicalScale;
 //http://45.113.235.98/api/live
 
 let wheelImage;
-var wheelkms = 0;
-var currentWheelSpeed;
+var wheelkms = 0.025;
+var currentWheelSpeed = "";
 //armkms trigger from here
 let armImage;
-var armkms = 0.5;
-var currentArmSpeed;
+var armkms = 0.050;
+var currentArmSpeed = "";
 
-var wheelOn;
-var armOn;
+var speedImage;
+
+var wheelOn = false;
+var armOn = false;
 
 //Lato
 let LatoRegular;
@@ -60,6 +61,7 @@ function preload() {
   LatoRegular = loadFont('data/Lato-Regular.ttf')
   wheelImage = loadImage('data/wheel.png');
   armImage = loadImage('data/arm.png');
+  speedImage = loadImage('data/speed.png');
 }
 
 function setup() {
@@ -86,6 +88,13 @@ function setup() {
     if(data.rpm === "0"){
       console.log("Session has ended.");
       fetchHistorical(data);
+	  if(data.deviceId === 'ratwheel'){
+	    wheelOn = false;
+	  }
+
+	  if (data.deviceId === 'armwheel'){
+	    armOn = false;
+	  } 
     }
   });
 
@@ -138,7 +147,6 @@ function drawWheelParticles(latestData, radius){
     wheelParticles = [];
 
     push();
-      noStroke();
       var mappedSessionData = map(latestData, 0, 0.1, 0, TWO_PI);
 
       var startPoint = floor(mappedSessionData/(TWO_PI*2))*TWO_PI*2;
@@ -173,15 +181,14 @@ function drawArmParticles(latestData, radius){
     armParticles = [];
 
     push();
-      noStroke();
-      var mappedSessionData = map(0.01, 0, 0.1, 0, TWO_PI);
+      var mappedSessionData = map(latestData, 0, 0.1, 0, TWO_PI);
 
-      var startPoint = floor(mappedSessionData/(TWO_PI*2))*TWO_PI*2;
+      var armStartPoint = floor(mappedSessionData/(TWO_PI*2))*TWO_PI*2;
       var mappedFullCycle = (mappedSessionData/(TWO_PI*2))%1;
       var remainingCycle = mappedFullCycle*(TWO_PI*2);
 
-      if (startPoint > TWO_PI) {
-        for (let i = startPoint-TWO_PI; i < startPoint+remainingCycle; i+=0.03){
+      if (armStartPoint > TWO_PI) {
+        for (let i = armStartPoint-TWO_PI; i < armStartPoint+remainingCycle; i+=0.05){
           let mappedColor = map(i, 0, TWO_PI*2, 0, 1);
           let h = lerp(0, 360,mappedColor);
           let colorFill = color(h%360,90,90);
@@ -191,7 +198,7 @@ function drawArmParticles(latestData, radius){
           armParticles.push(new armParticle(x,y,colorFill));  
         }         
       } else {
-        for (let i = startPoint; i < startPoint+remainingCycle; i+=0.03){
+        for (let i = armStartPoint; i < armStartPoint+remainingCycle; i+=0.05){
           let mappedColor = map(i, 0, TWO_PI*2, 0, 1);
           let h = lerp(0, 360,mappedColor);
           let colorFill = color(h%360,90,90);
@@ -217,9 +224,9 @@ function updateSessionParticles(){
   push();
   translate(width/2,height/2);
   rotate(-HALF_PI);
-    for (let particle of armParticles){
-      particle.update();
-      particle.show();    
+    for (let p of armParticles){
+      p.update();
+      p.show();    
     }
   pop();
 }
@@ -231,6 +238,7 @@ function getTotalKmData(totalKmData){
 }
 
 function drawOdometre(armMetreData, wheelMetreData){
+  push();
   var formatArmKms = (armMetreData*1000).toFixed(0);
   var formatWheelKms = (wheelMetreData*1000).toFixed(0);
 
@@ -241,37 +249,67 @@ function drawOdometre(armMetreData, wheelMetreData){
   ellipse(width/2,height/2,810+180,810+180);
   ellipse(width/2,height/2,810,810);
   line(width/2-(570/2),height/2, width/2+(570/2),height/2);
+  
+  drawWheelParticles(wheelMetreData, 540);
+  drawArmParticles(armMetreData, 450);
 
   fill(0);
   noStroke();
   textAlign(CENTER);
-  textSize(100);
-  drawWheelParticles(wheelMetreData, 540);
+  textSize(80); 
   image(wheelImage,width/2-160,height/2-140);
-  text(formatWheelKms,width/2+(282/2),height/2-160);
-
+  text(formatWheelKms,width/2+(282/2)-20,height/2-150);
   textSize(20);
-  text("METRES TRAVELLED",width/2+(282/2),height/2-120); 
+  text("METRES TRAVELLED",width/2+(282/2)-20,height/2-115); 
   fill('#e2e2e2');
-  rect(width/2,height/2-90,282,45);
-
+  rect(width/2-20,height/2-90,282,45);
   fill(0);
-  textSize(100);
-  drawArmParticles(armMetreData, 450);
-  text(formatArmKms,width/2,height/2+160);
+  textAlign(LEFT);
+  text(currentWheelSpeed+"KM/H",width/2+20-20,height/2-60); 
+  image(speedImage,width/2+282-40-20,height/2-68);
+  
+  translate(0,280);
+  fill(0);
+  noStroke();
+  textAlign(CENTER);
+  textSize(80); 
+  image(armImage,width/2-160-20,height/2-140);
+  text(formatArmKms,width/2+(282/2)-20,height/2-150);
+  textSize(20);
+  text("METRES TRAVELLED",width/2+(282/2)-20,height/2-115); 
+  fill('#e2e2e2');
+  rect(width/2-20,height/2-90,282,45);
+  fill(0);
+  textAlign(LEFT);
+  text(currentArmSpeed+"KM/H",width/2+20-20,height/2-60); 
+  image(speedImage,width/2+282-40-20,height/2-68);
+
+  pop();
+
+  if(wheelOn){
+    wheelkms+=0.001;
+  }
+
+  if(armOn){
+    armkms+=0.001;
+  }
+  
+  
 }
 
 function updateData(updatedData){
   if(updatedData.deviceId === 'ratwheel'){
     //console.log(updatedData.deviceId);
-    wheelkms = updatedData.kmh;
-    currentWheelSpeed = updatedData.avgRpm;
+    wheelOn = true;
+    wheelkms = updatedData.km;
+    currentWheelSpeed = updatedData.kmh.toFixed(2);
   }
 
   if (updatedData.deviceId === 'armwheel'){
     //console.log(updatedData.deviceId); 
-    armkms = updatedData.kmh;
-    currentArmSpeed = updatedData.avgRpm;
+    armOn = true;
+    armkms = updatedData.km;
+    currentArmSpeed = updatedData.kmh.toFixed(2);
   }     
 }
 

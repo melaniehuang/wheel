@@ -42,6 +42,7 @@ class armParticle{
   }
 
   show(){
+    noStroke();
     fill(this.eFill);
     ellipse(this.pos.x, this.pos.y,90,90);
   }
@@ -64,6 +65,7 @@ class wheelParticle{
   }
 
   show(){
+    noStroke();
     fill(this.eFill);
     ellipse(this.pos.x, this.pos.y,90,90);
   }
