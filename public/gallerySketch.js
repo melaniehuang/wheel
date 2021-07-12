@@ -40,11 +40,11 @@ let historicalScale;
 //http://45.113.235.98/api/live
 
 let wheelImage;
-var wheelkms = 0.025;
+var wheelkms = 0.0;
 var currentWheelSpeed = "";
 //armkms trigger from here
 let armImage;
-var armkms = 0.050;
+var armkms = 0.0;
 var currentArmSpeed = "";
 
 var speedImage;
@@ -91,14 +91,16 @@ function setup() {
 	  if(data.deviceId === 'ratwheel'){
 	  	console.log("Wheel session has ended.");  
 	    wheelOn = false;
-	    var currentWheelSpeed = "0.00";
+      wheelkms = 0;
+	    currentWheelSpeed = "0.00";
 	    fetchHistorical(data);
 	  }
 
 	  if (data.deviceId === 'armwheel'){
 	  	console.log("Armbike session has ended."); 
 	    armOn = false;
-	    var currentArmSpeed = "0.00";
+      armkms = 0;
+	    currentArmSpeed = "0.00";
 	    fetchHistorical(data);
 	  } 
     }
@@ -277,7 +279,7 @@ function drawOdometre(armMetreData, wheelMetreData){
   noStroke();
   textAlign(CENTER);
   textSize(100); 
-  image(armImage,width/2-160-20,height/2-140);
+  image(armImage,width/2-160-20,height/2-135);
   text(formatArmKms,width/2+(282/2)-20,height/2-155);
   textSize(30);
   text("METRES TRAVELLED",width/2+(282/2)-20,height/2-115); 
@@ -320,7 +322,7 @@ function updateData(updatedData){
 
 function fetchHistorical(){
   console.log("fetching historical...");	
-  let urlHistory = 'http://45.113.235.98/api/history?limit=9';
+  let urlHistory = 'https://45.113.235.98/api/history?limit=9';
   httpGet(urlHistory, 'json', function(response) {
 
     totalKms = response.totalKm;
