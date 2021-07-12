@@ -322,7 +322,7 @@ function updateData(updatedData){
 
 function fetchHistorical(){
   console.log("fetching historical...");	
-  let urlHistory = 'https://45.113.235.98/api/history?limit=9';
+  let urlHistory = 'http://45.113.235.98/api/history?limit=9';
   httpGet(urlHistory, 'json', function(response) {
 
     totalKms = response.totalKm;
