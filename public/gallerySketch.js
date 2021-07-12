@@ -72,7 +72,7 @@ function setup() {
   imageMode(CENTER);
   textFont(LatoRegular);
   textAlign(CENTER);
-  colorMode(HSB);
+  colorMode(HSB,360,100,100,100);
   
 
   socket = io.connect('45.113.235.98');
@@ -85,15 +85,21 @@ function setup() {
   	console.log(data);    
   	updateData(data);
 
-    if(data.rpm === "0"){
-      console.log("Session has ended.");
-      fetchHistorical(data);
+    if(data.status === "inactive"){
+        
+
 	  if(data.deviceId === 'ratwheel'){
+	  	console.log("Wheel session has ended.");  
 	    wheelOn = false;
+	    var currentWheelSpeed = "0.00";
+	    fetchHistorical(data);
 	  }
 
 	  if (data.deviceId === 'armwheel'){
+	  	console.log("Armbike session has ended."); 
 	    armOn = false;
+	    var currentArmSpeed = "0.00";
+	    fetchHistorical(data);
 	  } 
     }
   });
@@ -120,12 +126,10 @@ function setup() {
 
 function draw() {
   background('#f9f9f9');
-
+  tint(360,0,100,100);
   getTotalKmData(totalKms+wheelkms+armkms);
   drawHistorical();
-
   drawOdometre(armkms, wheelkms); 
-
   updateSessionParticles();
   drawCheerHearts();
 }
@@ -154,7 +158,7 @@ function drawWheelParticles(latestData, radius){
       var remainingCycle = mappedFullCycle*(TWO_PI*2);
 
       if (startPoint > TWO_PI) {
-        for (let i = startPoint-TWO_PI; i < startPoint+remainingCycle; i+=0.05){
+        for (let i = startPoint-TWO_PI; i < startPoint+remainingCycle; i+=0.025){
           let mappedColor = map(i, 0, TWO_PI*2, 0, 1);
           let h = lerp(0, 360,mappedColor);
           let colorFill = color(h%360,90,90);
@@ -164,7 +168,7 @@ function drawWheelParticles(latestData, radius){
           wheelParticles.push(new wheelParticle(x,y,colorFill));  
         }         
       } else {
-        for (let i = startPoint; i < startPoint+remainingCycle; i+=0.05){
+        for (let i = startPoint; i < startPoint+remainingCycle; i+=0.025){
           let mappedColor = map(i, 0, TWO_PI*2, 0, 1);
           let h = lerp(0, 360,mappedColor);
           let colorFill = color(h%360,90,90);
@@ -188,7 +192,7 @@ function drawArmParticles(latestData, radius){
       var remainingCycle = mappedFullCycle*(TWO_PI*2);
 
       if (armStartPoint > TWO_PI) {
-        for (let i = armStartPoint-TWO_PI; i < armStartPoint+remainingCycle; i+=0.05){
+        for (let i = armStartPoint-TWO_PI; i < armStartPoint+remainingCycle; i+=0.025){
           let mappedColor = map(i, 0, TWO_PI*2, 0, 1);
           let h = lerp(0, 360,mappedColor);
           let colorFill = color(h%360,90,90);
@@ -198,7 +202,7 @@ function drawArmParticles(latestData, radius){
           armParticles.push(new armParticle(x,y,colorFill));  
         }         
       } else {
-        for (let i = armStartPoint; i < armStartPoint+remainingCycle; i+=0.05){
+        for (let i = armStartPoint; i < armStartPoint+remainingCycle; i+=0.025){
           let mappedColor = map(i, 0, TWO_PI*2, 0, 1);
           let h = lerp(0, 360,mappedColor);
           let colorFill = color(h%360,90,90);
@@ -243,7 +247,7 @@ function drawOdometre(armMetreData, wheelMetreData){
   var formatWheelKms = (wheelMetreData*1000).toFixed(0);
 
   noFill();
-  stroke(0);
+  stroke('#e3e3e3');
   strokeWeight(1);
   ellipse(width/2,height/2,810+360,810+360);
   ellipse(width/2,height/2,810+180,810+180);
@@ -256,43 +260,43 @@ function drawOdometre(armMetreData, wheelMetreData){
   fill(0);
   noStroke();
   textAlign(CENTER);
-  textSize(80); 
+  textSize(100); 
   image(wheelImage,width/2-160,height/2-140);
-  text(formatWheelKms,width/2+(282/2)-20,height/2-150);
-  textSize(20);
+  text(formatWheelKms,width/2+(282/2)-20,height/2-155);
+  textSize(30);
   text("METRES TRAVELLED",width/2+(282/2)-20,height/2-115); 
   fill('#e2e2e2');
-  rect(width/2-20,height/2-90,282,45);
+  rect(width/2-20,height/2-90,282,55);
   fill(0);
   textAlign(LEFT);
-  text(currentWheelSpeed+"KM/H",width/2+20-20,height/2-60); 
-  image(speedImage,width/2+282-40-20,height/2-68);
+  text(currentWheelSpeed+"KM/H",width/2+20-20,height/2-55); 
+  image(speedImage,width/2+282-40-20,height/2-64,30,24);
   
   translate(0,280);
   fill(0);
   noStroke();
   textAlign(CENTER);
-  textSize(80); 
+  textSize(100); 
   image(armImage,width/2-160-20,height/2-140);
-  text(formatArmKms,width/2+(282/2)-20,height/2-150);
-  textSize(20);
+  text(formatArmKms,width/2+(282/2)-20,height/2-155);
+  textSize(30);
   text("METRES TRAVELLED",width/2+(282/2)-20,height/2-115); 
   fill('#e2e2e2');
-  rect(width/2-20,height/2-90,282,45);
+  rect(width/2-20,height/2-90,282,55);
   fill(0);
   textAlign(LEFT);
-  text(currentArmSpeed+"KM/H",width/2+20-20,height/2-60); 
-  image(speedImage,width/2+282-40-20,height/2-68);
+  text(currentArmSpeed+"KM/H",width/2+20-20,height/2-55); 
+  image(speedImage,width/2+282-40-20,height/2-64,30,24);
 
   pop();
 
-  if(wheelOn){
-    wheelkms+=0.001;
-  }
+  // if(wheelOn){
+  //   wheelkms+=0.001;
+  // }
 
-  if(armOn){
-    armkms+=0.001;
-  }
+  // if(armOn){
+  //   armkms+=0.001;
+  // }
   
   
 }
@@ -325,20 +329,27 @@ function fetchHistorical(){
     historicalkmsData = response.sessions;
     prevkms = [];
 
-    for (var i = 0; i < 9; i++){
+    console.log(response.sessions.length, response.sessions.length-9);
+    for (var i = response.sessions.length-1; i > response.sessions.length-10; i--){
       prevkms.push(historicalkmsData[i].km);
-
     }
     historicalScale = Math.max.apply(null,prevkms);
+
+    console.log(historicalkmsData);
   });
 }
 
 function drawHistorical(){
-  for (var i = 0; i < 9; i++){
+  for (var i = 8; i >= 0; i--){
     noFill();
     strokeWeight(lineWidth);
-    stroke(rainbow[i]);
-    var historicalCurrentMapped = map(prevkms[i], 0,historicalScale,0, TWO_PI);
+    stroke(rainbow[8-i]);
+    if (prevkms[8-i] === 0){
+      var historicalCurrentMapped = -HALF_PI+0.05;
+    } else {
+      var historicalCurrentMapped = map(prevkms[8-i], 0,historicalScale,0,TWO_PI-HALF_PI);
+    }
+    
     arc(width/2, height/2, maxRadius-(lineWidth*2)-(i*(lineWidth*2)), maxRadius-(lineWidth*2)-(i*(lineWidth*2)), -HALF_PI, historicalCurrentMapped,OPEN);
   }
 }

@@ -3,7 +3,7 @@ class Particle{
     this.pos = createVector(x,y);
     this.vel = createVector(random(-0.5,0.5),random(-0.5,0.5));
     this.acc = createVector(random(-0.2,0.2),random(-0.2,0.2));
-    this.lifetime = 255;
+    this.lifetime = 200;
   }
 
   finished(){
@@ -21,7 +21,7 @@ class Particle{
   }
 
   show(){
-  	tint(255, this.lifetime);
+  	tint(360,0,100,this.lifetime);
   	image(placeholderHeart,this.pos.x, this.pos.y,this.r-this.lifetime,this.r-this.lifetime);
   }
 }
