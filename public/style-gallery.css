@@ -7,6 +7,7 @@ body {
   margin: 0;
   overflow: hidden; 
   font-family: 'Lato', sans-serif;
+  font-size: 24px;
 }
 
 /* Create three unequal columns that floats next to each other */
@@ -54,6 +55,9 @@ body {
   text-align: center;
   font-size: 36px;
 }
+* {
+  box-sizing: border-box;
+}
 
 #armWheelFeed{
   position:absolute;
@@ -78,4 +82,102 @@ body {
   padding:14px 16px 16px 16px;
   text-align: center;
   font-size: 32px;
+}
+
+#wheelSummary{
+  position:absolute;
+  top:32px;
+  left:32px;
+  visibility: visible;
+  
+  background-color: #F277C6;
+  color:#F7EA48;
+  fill: #F7EA48;
+  border-color: #F7EA48; 
+}
+
+#armSummary{
+  position:absolute;
+  bottom:32px;
+  left:32px;
+  visibility: visible;
+
+  background-color: #5E249F;
+  fill: #2DCCD3;
+  color:#2DCCD3;
+  border-color: #2DCCD3; 
+}
+
+.summaryUI{
+  padding:64px 64px;  
+  border-radius: 64px;
+}
+
+.summaryUI h1{
+  font-size:190px;
+  text-align: center;
+  margin:0;
+  font-family: 'Rubik Mono One', sans-serif;
+  font-weight: normal;
+}
+
+#armSummary .summaryExclamation{
+  margin-top:48px;
+  margin-bottom:0;
+  display: grid;
+  grid-template-columns: 650px 80px;
+  column-gap: 36px;
+  justify-content: center;
+  align-content: center;
+}
+
+#wheelSummary .summaryExclamation{
+  margin-top:48px;
+  margin-bottom:0;
+  display: grid;
+  grid-template-columns: 80px 480px 80px;
+  column-gap: 36px;
+  justify-content: center;
+  align-content: center;
+}
+
+.summaryUI svg{
+  margin-top:20px;
+}
+
+.summaryUI h2{
+  font-size:100px;
+  text-align: center;
+  font-family: 'Rubik Mono One', sans-serif;
+  font-weight: normal;
+  margin:0;
+  padding:0;
+  letter-spacing: -4px;
+}
+
+.summaryRow{
+  width:794px;
+  border-top: solid 1px;
+  border-bottom: solid 1px;
+  padding:32px 80px;
+
+  display: grid;
+  grid-template-columns: 292px 292px;
+  column-gap: 32px;
+  justify-content: center;
+  align-content: center;
+}
+
+.summaryItem{
+  width:282px;
+  text-align: center;
+
+}
+
+.summaryNumber{
+  font-size:60px;
+}
+
+.summaryTitle{
+  font-size:24px;
 }
