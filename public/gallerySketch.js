@@ -86,23 +86,17 @@ function setup() {
   	updateData(data);
 
     if(data.status === "inactive"){
-        
+  	  if(data.deviceId === 'ratwheel'){
+  	  	console.log("Wheel session has ended.");  
+        drawSessionSummary("ratwheel", data);
+        fetchHistorical(data);
+  	  }
 
-	  if(data.deviceId === 'ratwheel'){
-	  	console.log("Wheel session has ended.");  
-	    wheelOn = false;
-      wheelkms = 0;
-	    currentWheelSpeed = "0.00";
-	    fetchHistorical(data);
-	  }
-
-	  if (data.deviceId === 'armwheel'){
-	  	console.log("Armbike session has ended."); 
-	    armOn = false;
-      armkms = 0;
-	    currentArmSpeed = "0.00";
-	    fetchHistorical(data);
-	  } 
+  	  if (data.deviceId === 'armwheel'){
+  	  	console.log("Armbike session has ended."); 
+        drawSessionSummary("armwheel", data);
+        fetchHistorical(data);
+  	  } 
     }
   });
 
@@ -123,6 +117,106 @@ function setup() {
   //http://45.113.235.98/api/history?limit=9
   for (var i = 0; i < 9; i++){
     prevkms.push(TWO_PI);
+  }
+}
+
+function drawSessionSummary(device, d){
+
+  if (device === "ratwheel"){
+      let summaryData = fetchPastSession(d);
+      //wheelSummaryId
+      //wheelSummaryMetres,wheelSummaryMinutes
+      //wheelSummaryAverageSpeed,wheelSummaryTopSpeed
+      //wheelSummaryRotations,wheelSummaryLikes
+
+      var wheelId = select('#wheelSummaryId');
+      wheelId.html("#" + summaryData[0]); 
+
+      var wheelSummaryMetres = select('#wheelSummaryMetres');
+      wheelSummaryMetres.html(summaryData[1]);
+
+      var wheelSummaryMinutes = select('#wheelSummaryMinutes');
+      wheelSummaryMinutes.html(summaryData[2]);
+
+      var wheelSummaryAverageSpeed = select('#wheelSummaryAverageSpeed');
+      wheelSummaryAverageSpeed.html(summaryData[3]);
+
+      var wheelSummaryTopSpeed = select('#wheelSummaryTopSpeed');
+      wheelSummaryTopSpeed.html(summaryData[4]);
+
+      var wheelSummaryRotations = select('#wheelSummaryRotations');
+      wheelSummaryRotations.html(summaryData[5]);
+
+      var wheelSummaryLikes = select('#wheelSummaryLikes');
+      wheelSummaryLikes.html(summaryData[6]);
+
+      let wheelSummaryUI = select('#wheelSummary');
+      wheelSummaryUI.style('visibility', 'visible');
+
+      setTimeout(function(){ 
+        //wheelSummaryUI.style('visibility', 'hidden');        
+        wheelOn = false;
+        wheelkms = 0;
+        currentWheelSpeed = "0.00";
+        wheelSummaryUI.style('visibility', 'hidden');
+      }, 5000);
+  }
+  
+  if (device === "armwheel"){
+      let summaryArmData = fetchPastSession(d);
+
+      var armId = select('#armSummaryId');
+      armId.html("#" + summaryArmData[0]); 
+
+      var armSummaryMetres = select('#armSummaryMetres');
+      armSummaryMetres.html(summaryArmData[1]);
+
+      var armSummaryMinutes = select('#armSummaryMinutes');
+      armSummaryMinutes.html(summaryArmData[2]);
+
+      var armSummaryAverageSpeed = select('#armSummaryAverageSpeed');
+      armSummaryAverageSpeed.html(summaryArmData[3]);
+
+      var armSummaryTopSpeed = select('#armSummaryTopSpeed');
+      armSummaryTopSpeed.html(summaryArmData[4]);
+
+      var armSummaryRotations = select('#armSummaryRotations');
+      armSummaryRotations.html(summaryArmData[5]);
+
+      var armSummaryLikes = select('#armSummaryLikes');
+      armSummaryLikes.html(summaryArmData[6]);
+
+      let armSummaryUI = select('#armSummary');
+      armSummaryUI.style('visibility', 'visible');
+
+      setTimeout(function(){ 
+        armOn = false;
+        armkms = 0;
+        currentArmSpeed = "0.00";
+        armSummaryUI.style('visibility', 'hidden');
+      }, 5000);   
+  }
+}
+
+function fetchPastSession(lastSessionData){
+  let lastSessionValues = [];
+
+  lastSessionValues.push(checkNullValue(lastSessionData.mouseId));
+  lastSessionValues.push(checkNullValue(lastSessionData.km)); 
+  lastSessionValues.push(checkNullValue(lastSessionData.totalMinutes));
+  lastSessionValues.push(checkNullValue(lastSessionData.avgKmh));
+  lastSessionValues.push(checkNullValue(lastSessionData.topSpeed));
+  lastSessionValues.push(checkNullValue(lastSessionData.rotations));
+  lastSessionValues.push(checkNullValue(lastSessionData.likes));
+
+  return lastSessionValues;
+}
+
+function checkNullValue(value){
+  if (value != null){
+    return value;
+  } else {
+    return 0;
   }
 }
 
@@ -319,9 +413,8 @@ function updateData(updatedData){
   }     
 }
 
-
 function fetchHistorical(){
-  console.log("fetching historical...");	
+  console.log("Fetching historical...");	
   let urlHistory = 'http://45.113.235.98/api/history?limit=9';
   httpGet(urlHistory, 'json', function(response) {
 
@@ -331,13 +424,10 @@ function fetchHistorical(){
     historicalkmsData = response.sessions;
     prevkms = [];
 
-    console.log(response.sessions.length, response.sessions.length-9);
     for (var i = response.sessions.length-1; i > response.sessions.length-10; i--){
       prevkms.push(historicalkmsData[i].km);
     }
     historicalScale = Math.max.apply(null,prevkms);
-
-    console.log(historicalkmsData);
   });
 }
 
