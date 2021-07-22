@@ -21,10 +21,14 @@ var rainbow = ['rgb(235,51,0)',
                'rgb(0,80,181)',
                'rgb(95,36,159)',
                'rgb(242,119,198)'];
+var rainbowCurrentOrder = [];
+
 var colorCounter = 0;
 var shapePosition = 0;
 var ellipseCurrentLength = 0;
 //Green 91,197,0
+
+
 
 var prevSimulateKms = 0;
 var simulatekms = 0;
@@ -62,6 +66,7 @@ function preload() {
   wheelImage = loadImage('data/wheel.png');
   armImage = loadImage('data/arm.png');
   speedImage = loadImage('data/speed.png');
+  rainbowCurrentOrder = rainbow;
 }
 
 function setup() {
@@ -413,29 +418,43 @@ function updateData(updatedData){
   }     
 }
 
-function fetchHistorical(){
-  console.log("Fetching historical...");	
+function fetchHistorical(){  
   let urlHistory = 'http://45.113.235.98/api/history?limit=9';
   httpGet(urlHistory, 'json', function(response) {
-
+    console.log("Fetching historical...");  
     totalKms = response.totalKm;
     getTotalKmData(totalKms);
 
     historicalkmsData = response.sessions;
+
     prevkms = [];
+    rainbowCurrentOrder = [];
+
+    var currentId = historicalkmsData[response.sessions.length-1].mouseId;
+    var currentColor = currentId%9;
+
+    rainbowCurrentOrder = rainbow.slice(currentColor);
+
+    for(var i = 0; i < currentColor; i++){
+      rainbowCurrentOrder.push(rainbow[i]);
+    }
+    
+    console.log(rainbowCurrentOrder);
 
     for (var i = response.sessions.length-1; i > response.sessions.length-10; i--){
       prevkms.push(historicalkmsData[i].km);
     }
     historicalScale = Math.max.apply(null,prevkms);
+    
   });
 }
+
 
 function drawHistorical(){
   for (var i = 8; i >= 0; i--){
     noFill();
     strokeWeight(lineWidth);
-    stroke(rainbow[8-i]);
+    stroke(rainbowCurrentOrder[i]);
     if (prevkms[8-i] === 0){
       var historicalCurrentMapped = -HALF_PI+0.05;
     } else {
