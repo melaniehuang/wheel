@@ -182,3 +182,110 @@ body {
 .summaryTitle{
   font-size:24px;
 }
+
+.fade-in {
+  animation: fadeIn 2s;
+  -webkit-animation: fadeIn 2s;
+  -moz-animation: fadeIn 2s;
+  -o-animation: fadeIn 2s;
+  -ms-animation: fadeIn 2s;
+}
+
+@keyframes fadeIn {
+  0% {opacity:0;}
+  100% {opacity:1;}
+}
+
+@-moz-keyframes fadeIn {
+  0% {opacity:0;}
+  100% {opacity:1;}
+}
+
+@-webkit-keyframes fadeIn {
+  0% {opacity:0;}
+  100% {opacity:1;}
+}
+
+@-o-keyframes fadeIn {
+  0% {opacity:0;}
+  100% {opacity:1;}
+}
+
+@-ms-keyframes fadeIn {
+  0% {opacity:0;}
+  100% {opacity:1;}
+}
+
+.blinking {
+  animation: blinkText 1.2s infinite;
+  -webkit-animation: blinkText 1.2s infinite;
+  -moz-animation: blinkText 1.2s infinite;
+  -o-animation: blinkText 1.2s infinite;
+  -ms-animation: blinkText 1.2s infinite;
+}
+
+@keyframes blinkText {
+    0%{     color: #000;    }
+    49%{    color: #000; }
+    60%{    color: transparent; }
+    99%{    color:transparent;  }
+    100%{   color: #000;    }
+}
+
+@-moz-keyframes blinkText {
+    0%{     color: #000;    }
+    49%{    color: #000; }
+    60%{    color: transparent; }
+    99%{    color:transparent;  }
+    100%{   color: #000;    }
+}
+
+@-webkit-keyframes blinkText {
+    0%{     color: #000;    }
+    49%{    color: #000; }
+    60%{    color: transparent; }
+    99%{    color:transparent;  }
+    100%{   color: #000;    }
+}
+
+@-o-keyframes blinkText {
+    0%{     color: #000;    }
+    49%{    color: #000; }
+    60%{    color: transparent; }
+    99%{    color:transparent;  }
+    100%{   color: #000;    }
+}
+
+@-ms-keyframes blink {
+    0%{     color: #000;    }
+    49%{    color: #000; }
+    60%{    color: transparent; }
+    99%{    color:transparent;  }
+    100%{   color: #000;    }
+}
+
+#currentNumbers {
+ position:absolute;
+ top:720px;
+ left:1440px;
+ font-size: 100px;
+ width:250px;
+}
+
+#currentNumbers p{
+  padding-bottom:60px;
+  text-align: center;
+}
+
+#historical-id-list{
+  position:absolute;
+  top:32px;
+  left:1436px;
+  font-size: 32px;
+}
+
+#historical-id-list p{
+  margin:0;
+  padding: 0px 0px 13px 0px;
+  text-align: center;
+}

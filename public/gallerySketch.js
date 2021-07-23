@@ -10,8 +10,8 @@ let totalHistoricalData;
 
 //rainbow visualisation
 var prevkms = [];
-var maxRadius = 2000;
-var lineWidth = 40;
+var maxRadius = 2150;
+var lineWidth = 52;
 var rainbow = ['rgb(235,51,0)',
                'rgb(255,117,0)',
                'rgb(247,234,72)',
@@ -23,25 +23,30 @@ var rainbow = ['rgb(235,51,0)',
                'rgb(242,119,198)'];
 var rainbowCurrentOrder = [];
 
+var rainbowForeground = ['rgb(247,234,72)',
+                         'rgb(95,36,159)',
+                         'rgb(0,80,181)',
+                         'rgb(0,80,181)',
+                         'rgb(95,36,159)',
+                         'rgb(0,80,181)',
+                         'rgb(247,234,72)',
+                         'rgb(72,213,151)',
+                         'rgb(95,36,159)'];
+
+var rainbowForegroundCurrentOrder = [];
+var idList = [];
+
 var colorCounter = 0;
 var shapePosition = 0;
 var ellipseCurrentLength = 0;
-//Green 91,197,0
-
-
 
 var prevSimulateKms = 0;
 var simulatekms = 0;
 var kmsIncreased = false;
 var totalKms = 0;
 
-//Odometre Data
-//http://45.113.235.98/api/simulator
-//http://45.113.235.98/api/history?limit=10
-
 let historicalkmsData;
 let historicalScale;
-//http://45.113.235.98/api/live
 
 let wheelImage;
 var wheelkms = 0.0;
@@ -53,10 +58,6 @@ var currentArmSpeed = "";
 
 var speedImage;
 
-var wheelOn = false;
-var armOn = false;
-
-//Lato
 let LatoRegular;
 var startGetData;
 
@@ -78,8 +79,6 @@ function setup() {
   textFont(LatoRegular);
   textAlign(CENTER);
   colorMode(HSB,360,100,100,100);
-  
-
   socket = io.connect('45.113.235.98');
 
   //fetch current data
@@ -94,19 +93,14 @@ function setup() {
   	  if(data.deviceId === 'ratwheel'){
   	  	console.log("Wheel session has ended.");  
         drawSessionSummary("ratwheel", data);
-        fetchHistorical(data);
   	  }
 
   	  if (data.deviceId === 'armwheel'){
   	  	console.log("Armbike session has ended."); 
         drawSessionSummary("armwheel", data);
-        fetchHistorical(data);
   	  } 
     }
   });
-
-  // socket.on('ping', function(data) {
-  // });
 
   socket.on('like', function(data) {
 	  console.log('like received:');
@@ -114,12 +108,10 @@ function setup() {
 	  drawHeartParticle();
   });
 
-  
   strokeCap(SQUARE);
   noFill();  
   smooth();
-  
-  //http://45.113.235.98/api/history?limit=9
+
   for (var i = 0; i < 9; i++){
     prevkms.push(TWO_PI);
   }
@@ -129,10 +121,6 @@ function drawSessionSummary(device, d){
 
   if (device === "ratwheel"){
       let summaryData = fetchPastSession(d);
-      //wheelSummaryId
-      //wheelSummaryMetres,wheelSummaryMinutes
-      //wheelSummaryAverageSpeed,wheelSummaryTopSpeed
-      //wheelSummaryRotations,wheelSummaryLikes
 
       var wheelId = select('#wheelSummaryId');
       wheelId.html("#" + summaryData[0]); 
@@ -156,14 +144,23 @@ function drawSessionSummary(device, d){
       wheelSummaryLikes.html(summaryData[6]);
 
       let wheelSummaryUI = select('#wheelSummary');
+      wheelSummaryUI.style('background-color', summaryData[7]);
+      wheelSummaryUI.style('color', summaryData[8]);
+      wheelSummaryUI.style('fill', summaryData[8]);
       wheelSummaryUI.style('visibility', 'visible');
+      wheelSummaryUI.class('summaryUI fade-in');
+      
+      let wheelSessionFinished = select('#currentNumbersWheel');
+      wheelSessionFinished.class('blinking');
 
       setTimeout(function(){ 
-        //wheelSummaryUI.style('visibility', 'hidden');        
+        wheelSessionFinished.class('');
         wheelOn = false;
         wheelkms = 0;
         currentWheelSpeed = "0.00";
         wheelSummaryUI.style('visibility', 'hidden');
+        wheelSummaryUI.class('summaryUI');
+        fetchHistorical(d);
       }, 5000);
   }
   
@@ -189,30 +186,44 @@ function drawSessionSummary(device, d){
       armSummaryRotations.html(summaryArmData[5]);
 
       var armSummaryLikes = select('#armSummaryLikes');
-      armSummaryLikes.html(summaryArmData[6]);
+      armSummaryLikes.html(summaryArmData[6]);      
 
       let armSummaryUI = select('#armSummary');
+      armSummaryUI.style('background-color', summaryArmData[7]);
+      armSummaryUI.style('color', summaryArmData[8]);
+      armSummaryUI.style('fill', summaryArmData[8]);    
       armSummaryUI.style('visibility', 'visible');
+      armSummaryUI.class('summaryUI fade-in');
+      
+      let armSessionFinished = select('#currentNumbersArm');
+      armSessionFinished.class('blinking');
 
       setTimeout(function(){ 
+        armSessionFinished.class('');
         armOn = false;
         armkms = 0;
         currentArmSpeed = "0.00";
         armSummaryUI.style('visibility', 'hidden');
+        armSummaryUI.class('summaryUI');
+
+        fetchHistorical(d);
       }, 5000);   
   }
 }
 
 function fetchPastSession(lastSessionData){
   let lastSessionValues = [];
+  var formatKms = (lastSessionData.km*1000).toFixed(0);
 
   lastSessionValues.push(checkNullValue(lastSessionData.mouseId));
-  lastSessionValues.push(checkNullValue(lastSessionData.km)); 
-  lastSessionValues.push(checkNullValue(lastSessionData.totalMinutes));
-  lastSessionValues.push(checkNullValue(lastSessionData.avgKmh));
-  lastSessionValues.push(checkNullValue(lastSessionData.topSpeed));
-  lastSessionValues.push(checkNullValue(lastSessionData.rotations));
+  lastSessionValues.push(checkNullValue(formatKms)); 
+  lastSessionValues.push(checkNullValue(lastSessionData.totalMinutes.toFixed(2)));
+  lastSessionValues.push(checkNullValue(lastSessionData.avgKmh.toFixed(2)));
+  lastSessionValues.push(checkNullValue(lastSessionData.topSpeed.toFixed(2)));
+  lastSessionValues.push(checkNullValue(lastSessionData.rotations.toFixed(2)));
   lastSessionValues.push(checkNullValue(lastSessionData.likes));
+  lastSessionValues.push(rainbowCurrentOrder[0]);
+  lastSessionValues.push(rainbowForegroundCurrentOrder[0]);
 
   return lastSessionValues;
 }
@@ -249,71 +260,71 @@ function drawCheerHearts(){
 }
 
 function drawWheelParticles(latestData, radius){
-    wheelParticles = [];
+  wheelParticles = [];
 
-    push();
-      var mappedSessionData = map(latestData, 0, 0.1, 0, TWO_PI);
+  push();
+    var mappedSessionData = map(latestData, 0, 0.1, 0, TWO_PI);
 
-      var startPoint = floor(mappedSessionData/(TWO_PI*2))*TWO_PI*2;
-      var mappedFullCycle = (mappedSessionData/(TWO_PI*2))%1;
-      var remainingCycle = mappedFullCycle*(TWO_PI*2);
+    var startPoint = floor(mappedSessionData/(TWO_PI*2))*TWO_PI*2;
+    var mappedFullCycle = (mappedSessionData/(TWO_PI*2))%1;
+    var remainingCycle = mappedFullCycle*(TWO_PI*2);
 
-      if (startPoint > TWO_PI) {
-        for (let i = startPoint-TWO_PI; i < startPoint+remainingCycle; i+=0.025){
-          let mappedColor = map(i, 0, TWO_PI*2, 0, 1);
-          let h = lerp(0, 360,mappedColor);
-          let colorFill = color(h%360,90,90);
-          let r = radius;
-          let x = r * cos(i);
-          let y = r * sin(i);
-          wheelParticles.push(new wheelParticle(x,y,colorFill));  
-        }         
-      } else {
-        for (let i = startPoint; i < startPoint+remainingCycle; i+=0.025){
-          let mappedColor = map(i, 0, TWO_PI*2, 0, 1);
-          let h = lerp(0, 360,mappedColor);
-          let colorFill = color(h%360,90,90);
-          let r = radius;
-          let x = r * cos(i);
-          let y = r * sin(i);
-          wheelParticles.push(new wheelParticle(x,y,colorFill));  
-        }           
-      }
-    pop();   
+    if (startPoint > TWO_PI) {
+      for (let i = startPoint-TWO_PI; i < startPoint+remainingCycle; i+=0.025){
+        let mappedColor = map(i, 0, TWO_PI*2, 0, 1);
+        let h = lerp(0, 360,mappedColor);
+        let colorFill = color(h%360,90,90);
+        let r = radius;
+        let x = r * cos(i);
+        let y = r * sin(i);
+        wheelParticles.push(new wheelParticle(x,y,colorFill));  
+      }         
+    } else {
+      for (let i = startPoint; i < startPoint+remainingCycle; i+=0.025){
+        let mappedColor = map(i, 0, TWO_PI*2, 0, 1);
+        let h = lerp(0, 360,mappedColor);
+        let colorFill = color(h%360,90,90);
+        let r = radius;
+        let x = r * cos(i);
+        let y = r * sin(i);
+        wheelParticles.push(new wheelParticle(x,y,colorFill));  
+      }           
+    }
+  pop();   
 }
 
 function drawArmParticles(latestData, radius){
-    armParticles = [];
+  armParticles = [];
 
-    push();
-      var mappedSessionData = map(latestData, 0, 0.1, 0, TWO_PI);
+  push();
+    var mappedSessionData = map(latestData, 0, 0.1, 0, TWO_PI);
 
-      var armStartPoint = floor(mappedSessionData/(TWO_PI*2))*TWO_PI*2;
-      var mappedFullCycle = (mappedSessionData/(TWO_PI*2))%1;
-      var remainingCycle = mappedFullCycle*(TWO_PI*2);
+    var armStartPoint = floor(mappedSessionData/(TWO_PI*2))*TWO_PI*2;
+    var mappedFullCycle = (mappedSessionData/(TWO_PI*2))%1;
+    var remainingCycle = mappedFullCycle*(TWO_PI*2);
 
-      if (armStartPoint > TWO_PI) {
-        for (let i = armStartPoint-TWO_PI; i < armStartPoint+remainingCycle; i+=0.025){
-          let mappedColor = map(i, 0, TWO_PI*2, 0, 1);
-          let h = lerp(0, 360,mappedColor);
-          let colorFill = color(h%360,90,90);
-          let r = radius;
-          let x = r * cos(i);
-          let y = r * sin(i);
-          armParticles.push(new armParticle(x,y,colorFill));  
-        }         
-      } else {
-        for (let i = armStartPoint; i < armStartPoint+remainingCycle; i+=0.025){
-          let mappedColor = map(i, 0, TWO_PI*2, 0, 1);
-          let h = lerp(0, 360,mappedColor);
-          let colorFill = color(h%360,90,90);
-          let r = radius;
-          let x = r * cos(i);
-          let y = r * sin(i);
-          armParticles.push(new armParticle(x,y,colorFill));  
-        }           
-      }
-    pop();   
+    if (armStartPoint > TWO_PI) {
+      for (let i = armStartPoint-TWO_PI; i < armStartPoint+remainingCycle; i+=0.025){
+        let mappedColor = map(i, 0, TWO_PI*2, 0, 1);
+        let h = lerp(0, 360,mappedColor);
+        let colorFill = color(h%360,90,90);
+        let r = radius;
+        let x = r * cos(i);
+        let y = r * sin(i);
+        armParticles.push(new armParticle(x,y,colorFill));  
+      }         
+    } else {
+      for (let i = armStartPoint; i < armStartPoint+remainingCycle; i+=0.025){
+        let mappedColor = map(i, 0, TWO_PI*2, 0, 1);
+        let h = lerp(0, 360,mappedColor);
+        let colorFill = color(h%360,90,90);
+        let r = radius;
+        let x = r * cos(i);
+        let y = r * sin(i);
+        armParticles.push(new armParticle(x,y,colorFill));  
+      }           
+    }
+  pop();   
 }
 
 function updateSessionParticles(){
@@ -350,7 +361,6 @@ function drawOdometre(armMetreData, wheelMetreData){
   noFill();
   stroke('#e3e3e3');
   strokeWeight(1);
-  ellipse(width/2,height/2,810+360,810+360);
   ellipse(width/2,height/2,810+180,810+180);
   ellipse(width/2,height/2,810,810);
   line(width/2-(570/2),height/2, width/2+(570/2),height/2);
@@ -363,7 +373,10 @@ function drawOdometre(armMetreData, wheelMetreData){
   textAlign(CENTER);
   textSize(100); 
   image(wheelImage,width/2-160,height/2-140);
-  text(formatWheelKms,width/2+(282/2)-20,height/2-155);
+
+  var w = select('#currentNumbersWheel');
+  w.html(formatWheelKms); 
+  //text(formatWheelKms,width/2+(282/2)-20,height/2-155);
   textSize(30);
   text("METRES TRAVELLED",width/2+(282/2)-20,height/2-115); 
   fill('#e2e2e2');
@@ -379,7 +392,10 @@ function drawOdometre(armMetreData, wheelMetreData){
   textAlign(CENTER);
   textSize(100); 
   image(armImage,width/2-160-20,height/2-135);
-  text(formatArmKms,width/2+(282/2)-20,height/2-155);
+
+  var a = select('#currentNumbersArm');
+  a.html(formatArmKms); 
+  //text(formatArmKms,width/2+(282/2)-20,height/2-155);
   textSize(30);
   text("METRES TRAVELLED",width/2+(282/2)-20,height/2-115); 
   fill('#e2e2e2');
@@ -390,16 +406,6 @@ function drawOdometre(armMetreData, wheelMetreData){
   image(speedImage,width/2+282-40-20,height/2-64,30,24);
 
   pop();
-
-  // if(wheelOn){
-  //   wheelkms+=0.001;
-  // }
-
-  // if(armOn){
-  //   armkms+=0.001;
-  // }
-  
-  
 }
 
 function updateData(updatedData){
@@ -429,28 +435,30 @@ function fetchHistorical(){
 
     prevkms = [];
     rainbowCurrentOrder = [];
+    idList = [];
 
     var currentId = historicalkmsData[response.sessions.length-1].mouseId;
     var currentColor = currentId%9;
 
     rainbowCurrentOrder = rainbow.slice(currentColor);
+    rainbowForegroundCurrentOrder = rainbowForeground.slice(currentColor);
 
     for(var i = 0; i < currentColor; i++){
       rainbowCurrentOrder.push(rainbow[i]);
+      rainbowForegroundCurrentOrder.push(rainbowForeground[i]);
     }
-    
-    console.log(rainbowCurrentOrder);
 
     for (var i = response.sessions.length-1; i > response.sessions.length-10; i--){
       prevkms.push(historicalkmsData[i].km);
+      idList.push(historicalkmsData[i].mouseId);
     }
     historicalScale = Math.max.apply(null,prevkms);
-    
   });
 }
 
-
 function drawHistorical(){
+  var paragraphIdList = selectAll('.historicalID');
+
   for (var i = 8; i >= 0; i--){
     noFill();
     strokeWeight(lineWidth);
@@ -462,7 +470,14 @@ function drawHistorical(){
     }
     
     arc(width/2, height/2, maxRadius-(lineWidth*2)-(i*(lineWidth*2)), maxRadius-(lineWidth*2)-(i*(lineWidth*2)), -HALF_PI, historicalCurrentMapped,OPEN);
+    
+    fill(255);
+    strokeWeight(6);  
+    rect(width/2-30,maxRadius-(maxRadius-(lineWidth)-(i*(lineWidth)))-(lineWidth/2),120,lineWidth,lineWidth/2);
+
+    paragraphIdList[i].elt.innerHTML = idList[8-i];
   }
+
 }
 
 function drawHeartParticle(data){
