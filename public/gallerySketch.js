@@ -60,6 +60,7 @@ var speedImage;
 
 let LatoRegular;
 var startGetData;
+var mostRecentCounter = 0;
 
 function preload() {
   placeholderHeart = loadImage('data/heart.png');
@@ -160,6 +161,7 @@ function drawSessionSummary(device, d){
         currentWheelSpeed = "0.00";
         wheelSummaryUI.style('visibility', 'hidden');
         wheelSummaryUI.class('summaryUI');
+        mostRecentCounter = 0;
         fetchHistorical(d);
       }, 5000);
   }
@@ -205,7 +207,7 @@ function drawSessionSummary(device, d){
         currentArmSpeed = "0.00";
         armSummaryUI.style('visibility', 'hidden');
         armSummaryUI.class('summaryUI');
-
+        mostRecentCounter = 0;
         fetchHistorical(d);
       }, 5000);   
   }
@@ -468,8 +470,10 @@ function drawHistorical(){
     } else {
       var historicalCurrentMapped = map(prevkms[8-i], 0,historicalScale,0,TWO_PI-HALF_PI);
     }
+    //historicalCurrentMapped
+    historicalAnimated = lerp(-HALF_PI+0.05,historicalCurrentMapped,mostRecentCounter);
     
-    arc(width/2, height/2, maxRadius-(lineWidth*2)-(i*(lineWidth*2)), maxRadius-(lineWidth*2)-(i*(lineWidth*2)), -HALF_PI, historicalCurrentMapped,OPEN);
+    arc(width/2, height/2, maxRadius-(lineWidth*2)-(i*(lineWidth*2)), maxRadius-(lineWidth*2)-(i*(lineWidth*2)), -HALF_PI, historicalAnimated,OPEN);
     
     fill(255);
     strokeWeight(6);  
@@ -478,6 +482,30 @@ function drawHistorical(){
     paragraphIdList[i].elt.innerHTML = idList[8-i];
   }
 
+  // for (var i = 8; i > 7; i--){
+  //   noFill();
+  //   strokeWeight(lineWidth);
+  //   stroke(rainbowCurrentOrder[i]);
+  //   if (prevkms[8-i] === 0){
+  //     var historicalCurrentMapped = -HALF_PI+0.05;
+  //   } else {
+  //     var historicalCurrentMapped = map(prevkms[8-i], 0,historicalScale,0,TWO_PI-HALF_PI);
+  //   }
+    
+  //   //historicalCurrentMapped
+  //   historicalAnimated = lerp(-HALF_PI+0.05,historicalCurrentMapped,mostRecentCounter);
+
+  //   arc(width/2, height/2, maxRadius-(lineWidth*2)-(i*(lineWidth*2)), maxRadius-(lineWidth*2)-(i*(lineWidth*2)), -HALF_PI, historicalAnimated,OPEN);
+    
+  //   fill(255);
+  //   strokeWeight(6);  
+  //   rect(width/2-30,maxRadius-(maxRadius-(lineWidth)-(i*(lineWidth)))-(lineWidth/2),120,lineWidth,lineWidth/2);
+  //   paragraphIdList[i].elt.innerHTML = idList[8-i];
+  // }
+  
+  if(mostRecentCounter < 1.0){
+    mostRecentCounter+=0.005;
+  }
 }
 
 function drawHeartParticle(data){

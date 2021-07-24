@@ -267,7 +267,7 @@ body {
 #currentNumbers {
  position:absolute;
  top:720px;
- left:1440px;
+ left:1428px;
  font-size: 100px;
  width:250px;
 }
@@ -280,7 +280,7 @@ body {
 #historical-id-list{
   position:absolute;
   top:32px;
-  left:1436px;
+  left:1434px;
   font-size: 32px;
 }
 
