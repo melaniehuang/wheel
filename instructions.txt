@@ -1,0 +1,74 @@
+1. If you need to restart the computer:
+
+- Open Terminal and type in the following:
+cd Documents/wheel
+
+- Hit the ENTER key
+
+- Now type in the following to start the local server:
+node server.js
+
+- Open a Google Chrome browser window and navigate to:
+localhost:3000/galleryscreen.html
+
+- Put the browser into fullscreen and refresh the screen
+
+2. To update version:
+
+- Go to already open Terminal window - it should be displaying:
+"My socket server is running"
+
+- Hit CTRL+C to stop socket server. This should bring up a new line:
+sgm_tech@sgmrainbowwheel wheel % 
+
+- Type into Terminal:
+cd
+
+- Hit the Enter key, this should bring up a new line:
+sgm_tech@sgmrainbowwheel ~ % 
+
+- Go to Finder and navigate to the directory 'Documents'
+
+- Delete the folder 'wheel' or Move to Bin.
+
+- Empty the bin to permanently delete old version.
+
+- Go back to the existing Terminal window and type:
+cd Documents/
+
+- Hit the Enter key
+
+- Type into the Terminal window:
+git clone https://github.com/melaniehuang/wheel.git
+
+- Hit the Enter key
+
+- This should bring up similar lines to the following:
+Cloning into 'wheel'...
+remote: Enumerating objects: 832, done.
+remote: Counting objects: 100% (832/832), done.
+remote: Compressing objects: 100% (641/641), done.
+remote: Total 832 (delta 247), reused 755 (delta 170), pack-reused 0
+Receiving objects: 100% (832/832), 1.36 MiB | 1.76 MiB/s, done.
+Resolving deltas: 100% (247/247), done.
+sgm_tech@sgmrainbowwheel Documents % 
+
+- Now if you navgiate back to Finder to the directory Documents, you should see a new folder called 'wheel'
+
+- To run the new version, go back to Terminal and type in:
+cd wheel/
+
+- Hit the ENTER key
+
+- Now type in:
+node server.js
+
+- Hit the ENTER key
+
+- The following line should appear in Terminal:
+My socket server is running
+
+- Open a Google Chrome browser window and navigate to:
+Git clone httpsnode
+
+- Put the browser into fullscreen and refresh screen
