@@ -1,33 +1,37 @@
 <!DOCTYPE html>
-<html lang="">
-
-  <head>
-    <meta charset="utf-8">
+<!-- saved from url=(0040)http://localhost:3000/galleryScreen.html -->
+<html lang=""><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Human Wheel</title>
     
-    <link rel="preconnect" href="https://fonts.gstatic.com">
-    <link href="https://fonts.googleapis.com/css2?family=Lato&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Rubik+Mono+One&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style-gallery.css">
-    <script src="libraries/p5.min.js"></script>
-    <script src="gallerySketch.js"></script>
-    <script src="particle.js"></script>
-  </head>
+    <link rel="preconnect" href="https://fonts.gstatic.com/">
+    <link href="./Human Wheel_files/css2" rel="stylesheet">
+    <link href="./Human Wheel_files/css2(1)" rel="stylesheet">
+    <link rel="stylesheet" href="./Human Wheel_files/style-gallery.css">
+    <script src="./Human Wheel_files/p5.min.js"></script>
+    <script src="./Human Wheel_files/gallerySketch.js"></script>
+    <script src="./Human Wheel_files/particle.js"></script>
+  <style>
+@font-face {
+font-family: Lato-Regular;
+src: url(data/Lato-Regular.ttf);
+}
+</style></head>
 
   <body>
   <!--https://www.classynemesis.com/projects/ytembed/-->
 
   <div id="historical-id-list">
-    <p id="id0" class="historicalID">0</p> 
-    <p id="id1" class="historicalID">1</p> 
-    <p id="id2" class="historicalID">2</p> 
-    <p id="id3" class="historicalID">3</p> 
-    <p id="id4" class="historicalID">4</p> 
-    <p id="id5" class="historicalID">5</p> 
-    <p id="id6" class="historicalID">6</p> 
-    <p id="id7" class="historicalID">7</p> 
-    <p id="id8" class="historicalID">8</p> 
+    <p id="id0" class="historicalID">751</p> 
+    <p id="id1" class="historicalID">752</p> 
+    <p id="id2" class="historicalID">753</p> 
+    <p id="id3" class="historicalID">754</p> 
+    <p id="id4" class="historicalID">755</p> 
+    <p id="id5" class="historicalID">756</p> 
+    <p id="id6" class="historicalID">757</p> 
+    <p id="id7" class="historicalID">758</p> 
+    <p id="id8" class="historicalID">759</p> 
   </div>
 
   <div id="currentNumbers">
@@ -39,64 +43,64 @@
     <div class="column side">
     	<div class="vidColumn">
 	    	<div class="maskVid">
-	     		<iframe id="wheelFeed" src="https://www.youtube.com/embed/live_stream?channel=UC7WeBZJ6yBGnA0rMJFwWbeQ&autoplay=1&modestbranding=1&showinfo=0&rel=0&theme=light&fs=0&controls=0&disablekb=1&mute=1" width="1920" height="1080" frameborder="0"></iframe>    
+	     		<iframe id="wheelFeed" src="./Human Wheel_files/live_stream.html" width="1920" height="1080" frameborder="0"></iframe>    
 	     	</div>
 	    </div>
      	<div class="totalColumn">
 	      <div id="totalkms">
-	        <h2>TOTAL: <span id="totalnum">_</span>KMS</h2>
+	        <h2>TOTAL: <span id="totalnum">259.70</span>KMS</h2>
 	      </div>
 	    </div>
 	    <div class="vidColumn">
 	      	<div class="maskVid">
-          <iframe id="armWheelFeed" src="https://www.youtube.com/embed/live_stream?channel=UC7WeBZJ6yBGnA0rMJFwWbeQ&autoplay=1&modestbranding=1&showinfo=0&rel=0&theme=light&fs=0&controls=0&disablekb=1&mute=1" width="1920" height="1080" frameborder="0"></iframe>     
+          <iframe id="armWheelFeed" src="./Human Wheel_files/live_stream(1).html" width="1920" height="1080" frameborder="0"></iframe>     
 	      	</div>
       	</div>
     </div>
   
     <div class="column middle">
-      <div id="myCanvas"></div>
+      <div id="myCanvas"><canvas id="defaultCanvas0" class="p5Canvas" width="2880" height="2153" style="width: 2880px; height: 2153px;"></canvas></div>
     </div>
     
     <div id="scan">
-      <img src="/data/qr-placeholder.png"></img>
+      <img src="./Human Wheel_files/qr-placeholder.png">
       <div class="label">SCAN TO CHEER</div>
     </div>
   </div>
 
   <div class="overlay">
       <div id="wheelSummary" class="summaryUI">
-          <h1 id ="wheelSummaryId">#</h1>	
+          <h1 id="wheelSummaryId">#</h1>	
        
        		<div class="summaryRow">
             <div class="summaryItem">
-    	      		<div id ="wheelSummaryMetres" class="summaryNumber">229</div>
+    	      		<div id="wheelSummaryMetres" class="summaryNumber">229</div>
     	      		<div class="summaryTitle">METRES TRAVELLED</div>
       			</div>
             <div class="summaryItem">
-                <div id ="wheelSummaryMinutes" class="summaryNumber">2:30</div>
+                <div id="wheelSummaryMinutes" class="summaryNumber">2:30</div>
                 <div class="summaryTitle">TOTAL MINUTES</div>
             </div>
           </div>
 
           <div class="summaryRow">
             <div class="summaryItem">
-                <div id ="wheelSummaryAverageSpeed" class="summaryNumber">4.29</div>
+                <div id="wheelSummaryAverageSpeed" class="summaryNumber">4.29</div>
                 <div class="summaryTitle">AVERAGE KM/H</div>
             </div>
             <div class="summaryItem">
-                <div id ="wheelSummaryTopSpeed" class="summaryNumber">6.31</div>
+                <div id="wheelSummaryTopSpeed" class="summaryNumber">6.31</div>
                 <div class="summaryTitle">TOP KM/H</div>
             </div>
           </div>  
 
           <div class="summaryRow">
             <div class="summaryItem">
-                <div id ="wheelSummaryRotations" class="summaryNumber">21</div>
+                <div id="wheelSummaryRotations" class="summaryNumber">21</div>
                 <div class="summaryTitle">WHEEL ROTATIONS</div>
             </div>
             <div class="summaryItem">
-                <div id ="wheelSummaryLikes" class="summaryNumber">2</div>
+                <div id="wheelSummaryLikes" class="summaryNumber">2</div>
                 <div class="summaryTitle">LIKES</div>
             </div>
           </div>            
@@ -122,7 +126,7 @@
     	</div>
 
       <div id="armSummary" class="summaryUI">
-          <h1 id ="armSummaryId">#</h1>  
+          <h1 id="armSummaryId">#</h1>  
        
           <div class="summaryRow">
             <div class="summaryItem">
@@ -174,7 +178,7 @@
   
 
   
-  <script src="/socket.io/socket.io.js"></script>
+  <script src="./Human Wheel_files/socket.io.js"></script>
 
-  </body>
-</html>
+  
+</body></html>

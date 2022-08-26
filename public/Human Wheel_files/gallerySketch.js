@@ -220,8 +220,8 @@ function fetchPastSession(lastSessionData){
   lastSessionValues.push(checkNullValue(lastSessionData.mouseId));
   lastSessionValues.push(checkNullValue(formatKms)); 
   lastSessionValues.push(checkNullValue(lastSessionData.totalMinutes.toFixed(2)));
-  lastSessionValues.push(checkNullValue(lastSessionData.topSpeed.toFixed(2)));
   lastSessionValues.push(checkNullValue(lastSessionData.avgKmh.toFixed(2)));
+  lastSessionValues.push(checkNullValue(lastSessionData.topSpeed.toFixed(2)));
   lastSessionValues.push(checkNullValue(lastSessionData.rotations.toFixed(2)));
   lastSessionValues.push(checkNullValue(lastSessionData.likes));
   lastSessionValues.push(rainbowCurrentOrder[0]);
