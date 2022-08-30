@@ -61,12 +61,14 @@ body {
 
 #armWheelFeed{
   position:absolute;
-  right:0px;
+  right:108px;
+  bottom:-168px;
 }
 
 #wheelFeed{
   position:absolute;
-  right:-960px;
+  right:-1240px;
+  top: -100px;
 }
 
 #scan{
