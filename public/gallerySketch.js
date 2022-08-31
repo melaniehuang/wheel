@@ -8,6 +8,10 @@ let wheelParticles = [];
 let bgCurrentColor;
 let totalHistoricalData;
 
+//Art Science Singapore reset values
+let artScienceResetKMs = 0;
+let artScienceResetIDs = 0;
+
 //rainbow visualisation
 var prevkms = [];
 var maxRadius = 2150;
@@ -124,7 +128,7 @@ function drawSessionSummary(device, d){
       let summaryData = fetchPastSession(d);
 
       var wheelId = select('#wheelSummaryId');
-      wheelId.html("#" + summaryData[0]); 
+      wheelId.html("#" + (summaryData[0] - artScienceResetIDs)); 
 
       var wheelSummaryMetres = select('#wheelSummaryMetres');
       wheelSummaryMetres.html(summaryData[1]);
@@ -170,7 +174,7 @@ function drawSessionSummary(device, d){
       let summaryArmData = fetchPastSession(d);
 
       var armId = select('#armSummaryId');
-      armId.html("#" + summaryArmData[0]); 
+      armId.html("#" + (summaryArmData[0] - artScienceResetIDs)); 
 
       var armSummaryMetres = select('#armSummaryMetres');
       armSummaryMetres.html(summaryArmData[1]);
@@ -430,7 +434,7 @@ function fetchHistorical(){
   let urlHistory = 'http://45.113.235.98/api/history?limit=9';
   httpGet(urlHistory, 'json', function(response) {
     console.log("Fetching historical...");  
-    totalKms = response.totalKm;
+    totalKms = response.totalKm - artScienceResetKMs;
     getTotalKmData(totalKms);
 
     historicalkmsData = response.sessions;
@@ -479,7 +483,7 @@ function drawHistorical(){
     strokeWeight(6);  
     rect(width/2-30,maxRadius-(maxRadius-(lineWidth)-(i*(lineWidth)))-(lineWidth/2),120,lineWidth,lineWidth/2);
 
-    paragraphIdList[i].elt.innerHTML = idList[8-i];
+    paragraphIdList[i].elt.innerHTML = idList[8-i] - artScienceResetIDs;
   }
 
   // for (var i = 8; i > 7; i--){

@@ -285,14 +285,15 @@ body {
 }
 
 #historical-id-list{
+  width:120px;
   position:absolute;
   top:32px;
-  left:1434px;
+  left:1410px;
   font-size: 32px;
 }
 
 #historical-id-list p{
   margin:0;
-  padding: 0px 0px 13px 0px;
+  padding: 0px 0px 14px 0px;
   text-align: center;
 }
