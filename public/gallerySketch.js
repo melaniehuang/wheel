@@ -9,8 +9,8 @@ let bgCurrentColor;
 let totalHistoricalData;
 
 //Art Science Singapore reset values
-let artScienceResetKMs = 0;
-let artScienceResetIDs = 0;
+let artScienceResetKMs = 1893;
+let artScienceResetIDs = 6467;
 
 //rainbow visualisation
 var prevkms = [];
