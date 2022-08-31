@@ -42,9 +42,9 @@ body {
 
 
 .maskVid{
-  width: 30vw;
-  height: 30vw;
-  border-radius: 15vw;
+  width: 36vw;
+  height: 36vw;
+  border-radius: 18vw;
   overflow: hidden;
   -webkit-mask-image: -webkit-radial-gradient(circle, white 100%, black 100%);  
   
@@ -55,9 +55,20 @@ body {
 }
 
 iframe{
-  width: 40vh;
-  height: 20vh;
-  margin-left:-10vh;
+  width:130vw;
+  height:30vh;
   overflow: hidden;
   background-color: #000;
+}
+
+#wheelFeed-mobile{
+  position:absolute;
+  left: -10px;
+  top: -40px;
+}
+
+#armWheelFeed-mobile{
+  position:absolute;
+  right:-10px;
+  top: -40px;
 }
