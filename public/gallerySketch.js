@@ -8,9 +8,9 @@ let wheelParticles = [];
 let bgCurrentColor;
 let totalHistoricalData;
 
-//Art Science Singapore reset values
+//Art Science Singapore reset values 1893 / 6471
 let artScienceResetKMs = 1893;
-let artScienceResetIDs = 6467;
+let artScienceResetIDs = 6471;
 
 //rainbow visualisation
 var prevkms = [];
